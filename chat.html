@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-психологічний асистент — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 65vh;
+  min-height: 500px;
+  background: rgba(20, 20, 36, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message {
+  display: flex;
+  gap: 12px;
+  max-width: 85%;
+}
+.message.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.message.bot {
+  align-self: flex-start;
+}
+.message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface2);
+  flex-shrink: 0;
+}
+.message.user .message-avatar {
+  background: var(--accent);
+  color: #080810;
+}
+.message-content {
+  background: var(--surface2);
+  padding: 12px 18px;
+  border-radius: 18px;
+  line-height: 1.5;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.message.user .message-content {
+  background: var(--accent);
+  color: #080810;
+}
+.message-content a {
+  color: var(--accent2);
+  text-decoration: underline;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.chat-input-area input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 14px 20px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+.chat-input-area input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+.chat-input-area button {
+  padding: 14px 28px;
+}
+
+.quick-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(20, 20, 36, 0.3);
+  border-radius: var(--radius-sm);
+}
+.quick-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 6px 14px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.quick-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.typing {
+  display: flex;
+  gap: 4px;
+  padding: 12px 18px;
+}
+.typing span {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out;
+}
+.typing span:nth-child(1) { animation-delay: 0s; }
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-10px); opacity: 1; }
+}
+
+.crisis-warning {
+  background: rgba(255,107,107,0.1);
+  border-left: 3px solid var(--red);
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html" class="active">🤖 AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div class="eyebrow gap-16">AI-психологічний асистент</div>
+  <h1 class="title gap-16">Поговоріть зі мною</h1>
+  <p class="lead gap-16">Ваш безпечний простір для роздумів. Я поруч, щоб підтримати, допомогти розібратись і знайти внутрішню опору.</p>
+  
+  <div class="quick-buttons">
+    <button class="quick-btn" onclick="quickQuestion('мені тривожно')">😰 Мені тривожно</button>
+    <button class="quick-btn" onclick="quickQuestion('я не можу заснути')">😴 Не можу заснути</button>
+    <button class="quick-btn" onclick="quickQuestion('відчуваю провину')">💔 Провина</button>
+    <button class="quick-btn" onclick="quickQuestion('панічна атака')">⚡ Панічна атака</button>
+    <button class="quick-btn" onclick="quickQuestion('хочу техніку заземлення')">🌍 Техніка заземлення</button>
+    <button class="quick-btn" onclick="quickQuestion('потрібна підтримка')">🫂 Підтримка</button>
+  </div>
+
+  <div class="chat-container">
+    <div class="chat-messages" id="chat-messages">
+      <div class="message bot">
+        <div class="message-avatar">🧠</div>
+        <div class="message-content">
+          <strong>Привіт, я PsyDoc AI</strong><br><br>
+          Я — ваш психологічний асистент. Я тут, щоб вислухати, підтримати та допомогти знайти внутрішню опору. <br><br>
+          Я не лікар і не ставлю діагнозів. Але я можу бути поруч у цю хвилину. <br><br>
+          Розкажіть, що вас турбує?
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Напишіть сюди..." onkeypress="if(event.key==='Enter') sendMessage()">
+      <button class="btn btn-primary" onclick="sendMessage()">Надіслати</button>
+    </div>
+  </div>
+
+  <div style="margin-top: 24px; text-align: center; font-size: 0.7rem; color: var(--text-dim);">
+    🤖 AI-асистент — це допоміжний інструмент. Для глибокої роботи записуйтесь на консультацію до наших психологів.
+  </div>
+
+</div>
+</section>
+</div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p>📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a></p>
+  <p>📷 <a href="https://instagram.com/x_psydoc_x">@x_psydoc_x</a> | 📷 <a href="https://instagram.com/anactacijka">@anactacijka</a> | 💬 Telegram: <a href="https://t.me/x_Psydoc_x">@x_Psydoc_x</a> / <a href="https://t.me/anactacijka">@anactacijka</a></p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+// ========== БАЗА ВІДПОВІДЕЙ ДЛЯ AI ==========
+
+// Критичні ключові слова для кризової допомоги
+const CRISIS_KEYWORDS = ['самогубство', 'суїцид', 'не хочу жити', 'немає сенсу жити', 'покінчити', 'не бачу виходу', 'втомився жити'];
+
+// Перевірка кризового стану
+function checkCrisis(message) {
+  const lowerMsg = message.toLowerCase();
+  for (let keyword of CRISIS_KEYWORDS) {
+    if (lowerMsg.includes(keyword)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Головна функція генерації відповіді
+function generateResponse(message, history) {
+  const lowerMsg = message.toLowerCase();
+  
+  // КРИЗОВА СИТУАЦІЯ
+  if (checkCrisis(message)) {
+    return `Я дуже вдячний(а), що ви поділилися цим. Те, що ви відчуваєте — дуже важливо, і ви не самі. 💙
+
+📞 <strong>Будь ласка, зателефонуйте на безкоштовну кризову лінію 24/7: 0 800 100 102</strong>
+
+Ви маєте значення. Ваше життя — цінне. Поруч є люди, які готові підтримати.
+
+Після розмови з фахівцем на лінії — будь ласка, зверніться до нашого психолога. Ми поруч.`;
+  }
+  
+  // ПАНІЧНА АТАКА
+  if (lowerMsg.includes('панічна атака') || lowerMsg.includes('паніка') || (lowerMsg.includes('серце') && lowerMsg.includes('б'))) {
+    return `Я чую, як вам зараз непросто. Панічна атака — це дуже страшно, але вона не небезпечна для життя. Вона мине. Спробуйте зі мною:
+
+🌬️ <strong>Дихання 4-7-8:</strong> вдих на 4 рахунки, затримка на 7, видих на 8. Повторіть 4 рази.
+
+🌍 <strong>Заземлення 5-4-3-2-1:</strong>
+• 5 речей, які ви бачите
+• 4 речі, яких можете торкнутись
+• 3 звуки, які чуєте
+• 2 запахи, які відчуваєте
+• 1 смак у роті
+
+💧 <strong>Холодна вода</strong> на обличчя або зап'ястя.
+
+Ви в безпеці. Це просто паніка. Вона мине. Я поруч.
+
+👉 Якщо панічні атаки повторюються — варто звернутись до психолога через <a href="contacts.html" style="color:var(--accent2);">розділ Контакти</a>.`;
+  }
+  
+  // ТРИВОГА
+  if (lowerMsg.includes('тривога') || lowerMsg.includes('тривожно') || lowerMsg.includes('хвилююсь')) {
+    return `Я бачу, скільки енергії забирає ця тривога. Давайте спробуємо разом її трохи заспокоїти.
+
+🧘 <strong>Техніка «СТОП»:</strong>
+• S — Stop (зупиніться)
+• T — Take a breath (вдихніть глибоко)
+• O — Observe (помітьте, що в тілі та думках)
+• P — Proceed (продовжуйте, але усвідомлено)
+
+🫂 <strong>Запитайте себе:</strong> «Що реально загрожує мені прямо зараз?» Часто відповідь — «нічого». Тривога дивиться в майбутнє, а безпека — в теперішньому.
+
+🎨 Спробуйте уявити свою тривогу як образ. Який він? Колір? Форма? Що йому потрібно?
+
+👉 Для глибшої роботи з тривогою, ви можете записатись до нашого психолога в <a href="contacts.html" style="color:var(--accent2);">розділі Контакти</a>.`;
+  }
+  
+  // ПРОВИНА
+  if (lowerMsg.includes('провина') || lowerMsg.includes('винен') || lowerMsg.includes('винна')) {
+    return `Провина — дуже важка емоція. Вона може бути здоровою (коли ми дійсно зробили помилку) або токсичною (коли ми беремо відповідальність за те, що не залежало від нас).
+
+📝 <strong>Спробуйте техніку «Журнал провини»:</strong>
+1. Що саме я зробив(ла)?
+2. Чи був(ла) я реально відповідальний(а)?
+3. Що я можу зробити, щоб виправити (якщо можливо)?
+4. Що б я сказав(ла) другу в такій ситуації?
+
+🕯️ <strong><em>Метафорична карта:</em></strong> Уявіть, що ви тримаєте в руках важкий камінь — це ваша провина. Ви можете тримати його далі, або покласти на землю. Відпустити — не означає забути. Це означає припинити нести те, що вже не треба нести.
+
+👉 Робота з провиною часто потребує підтримки. Наші психологи готові бути поруч — зв'яжіться через <a href="contacts.html" style="color:var(--accent2);">Контакти</a>.`;
+  }
+  
+  // БЕЗСОННЯ
+  if (lowerMsg.includes('не можу заснути') || lowerMsg.includes('безсоння') || lowerMsg.includes('сплю погано')) {
+    return `Безсоння — це виснажливо. Я чую вашу втому.
+
+🌙 <strong>Ритуал перед сном:</strong>
+• За годину до сну — без екранів
+• Теплий чай або молоко
+• Свічка або приглушене світло
+
+📖 <strong>Техніка «Контейнер для думок»:</strong> Запишіть на папір всі думки, які не дають спати, і скажіть їм: «Я повернусь до вас завтра. А зараз — час сну».
+
+🌬️ <strong>Дихання животом:</strong> Покладіть руку на живіт. Вдих — живіт надувається, видих — опускається. 5-10 хвилин.
+
+👉 Якщо безсоння триває довго — психолог може допомогти. Напишіть нам у <a href="contacts.html" style="color:var(--accent2);">Контакти</a>.`;
+  }
+  
+  // ТЕХНІКА ЗАЗЕМЛЕННЯ
+  if (lowerMsg.includes('заземлення') || lowerMsg.includes('5-4-3-2-1')) {
+    return `🌍 <strong>Техніка заземлення 5-4-3-2-1</strong> (допомагає повернутись у «тут і зараз»):
+
+👁️ 5 речей, які ви <strong>бачите</strong> прямо зараз
+🖐️ 4 речі, яких можете <strong>торкнутися</strong>
+👂 3 звуки, які <strong>чуєте</strong>
+👃 2 запахи, які <strong>відчуваєте</strong>
+👅 1 смак у <strong>роті</strong>
+
+Робіть це повільно, вголос. Це повертає нервову систему в безпеку.
+
+💪 <strong>Додатково:</strong> відчуйте ногами підлогу. Вагу тіла на стільці. Ви тут. Ви в безпеці.`;
+  }
+  
+  // МАК-МЕТАФОРА (якщо запит тупиковий або клієнт не знає що робити)
+  if (lowerMsg.includes('не знаю') || lowerMsg.includes('заплутався') || lowerMsg.includes('не розумію')) {
+    return `Розумію. Іноді буває важко знайти слова або навіть зрозуміти, що саме відбувається.
+
+🎴 <strong>Спробуємо метафору?</strong> Уявіть, що ви дивитесь на картину. На ній — дорога, яка розділяється на дві стежки. Одна веде в темний ліс, інша — до річки, що світиться в місячному світлі.
+
+• Що ви бачите на цій картині?  
+• Де ви зараз — на роздоріжжі чи вже на одній із стежок?  
+• Що ви відчуваєте?
+
+Образ, який виникає, — це ключ до вашого внутрішнього стану. Не поспішайте. Просто спостерігайте.
+
+👉 Коли відчуєте готовність розібратись глибше — ми в <a href="contacts.html" style="color:var(--accent2);">Контакти</a>.`;
+  }
+  
+  // ЗАГАЛЬНА ПІДТРИМКА
+  if (lowerMsg.includes('підтримка') || lowerMsg.includes('важко') || lowerMsg.includes('втомився') || lowerMsg.includes('втомилась')) {
+    return `Я поруч. Дякую, що ділитесь. Те, що ви відчуваєте — має значення.
+
+💪 <strong>Маленький крок:</strong> Що одне ви можете зробити для себе прямо зараз? Випити води? Пройтись кімнатою? Подихати?
+
+Це не має бути великим. Достатньо однієї маленької дії, яка каже: «Я про себе піклуюсь».
+
+🫂 Ви не самі. Якщо хочете глибшої підтримки — наші психологи готові бути поруч. <a href="contacts.html" style="color:var(--accent2);">Зв'яжіться з нами</a>.`;
+  }
+  
+  // ДЕФОЛТНА ВІДПОВІДЬ (ресурсна, з питанням)
+  return `Дякую, що поділились. Я чую вас.
+
+🧠 <strong>Давайте разом подивимось на цю ситуацію:</strong>
+• Що для вас зараз найважче?
+• Що б ви хотіли змінити найбільше?
+• Яка найменша дія може наблизити вас до бажаного?
+
+💡 Іноді відповіді ховаються в простих питаннях. Не поспішайте.
+
+👉 Якщо відчуваєте, що самому/самій важко розібратись — психолог може підтримати професійно. <a href="contacts.html" style="color:var(--accent2);">Напишіть нам</a>.`;
+}
+
+// ========== ЛОГІКА ЧАТУ ==========
+let chatHistory = [];
+
+function addMessage(text, sender) {
+  const container = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = `message ${sender}`;
+  div.innerHTML = `
+    <div class="message-avatar">${sender === 'user' ? '👤' : '🧠'}</div>
+    <div class="message-content">${text}</div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const container = document.getElementById('chat-messages');
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'message bot';
+  typingDiv.id = 'typing-indicator';
+  typingDiv.innerHTML = `
+    <div class="message-avatar">🧠</div>
+    <div class="typing"><span></span><span></span><span></span></div>
+  `;
+  container.appendChild(typingDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+function hideTyping() {
+  const typing = document.getElementById('typing-indicator');
+  if (typing) typing.remove();
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const message = input.value.trim();
+  if (!message) return;
+  
+  addMessage(message, 'user');
+  chatHistory.push({ role: 'user', content: message });
+  input.value = '';
+  
+  showTyping();
+  
+  setTimeout(() => {
+    hideTyping();
+    const response = generateResponse(message, chatHistory);
+    addMessage(response, 'bot');
+    chatHistory.push({ role: 'assistant', content: response });
+    
+    // Обмежуємо історію до 30 повідомлень
+    if (chatHistory.length > 30) chatHistory = chatHistory.slice(-30);
+  }, 800);
+}
+
+function quickQuestion(text) {
+  document.getElementById('chat-input').value = text;
+  sendMessage();
+}
+
+// Збереження історії в localStorage
+function saveChatHistory() {
+  localStorage.setItem('chatHistory', JSON.stringify(chatHistory.slice(-50)));
+}
+window.onbeforeunload = saveChatHistory;
+
+// Завантаження історії
+const saved = localStorage.getItem('chatHistory');
+if (saved) {
+  try {
+    const parsed = JSON.parse(saved);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      chatHistory = parsed;
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '';
+      parsed.forEach(msg => {
+        if (msg.role === 'user') addMessage(msg.content, 'user');
+        else if (msg.role === 'assistant') addMessage(msg.content, 'bot');
+      });
+    }
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

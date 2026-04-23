@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренування мозку — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.exercises-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+@media(max-width:900px){ .exercises-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width:550px){ .exercises-grid { grid-template-columns: 1fr; } }
+
+.ex-card {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ex-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px var(--accent-glow);
+}
+.ex-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.ex-name { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 8px; }
+.ex-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+.difficulty {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  margin-right: 8px;
+}
+.easy { background: rgba(109,222,192,0.15); color: var(--accent2); }
+.medium { background: rgba(183,124,255,0.15); color: var(--accent); }
+.hard { background: rgba(240,163,208,0.15); color: var(--accent3); }
+
+#ex-runner { display: none; }
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.schulte-grid, .memory-grid, .cube-grid {
+  display: inline-grid;
+  gap: 8px;
+  background: var(--surface2);
+  padding: 20px;
+  border-radius: var(--radius-md);
+  margin: 20px 0;
+}
+.schulte-cell, .mem-cell, .cube-cell {
+  width: 70px;
+  height: 70px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.schulte-cell:hover, .mem-cell:hover { border-color: var(--accent); color: var(--accent); }
+.schulte-cell.correct { background: rgba(109,222,192,0.2); border-color: var(--accent2); color: var(--accent2); }
+.mem-cell.revealed { background: var(--accent-glow); border-color: var(--accent); }
+.mem-cell.matched { background: rgba(109,222,192,0.2); border-color: var(--accent2); }
+.mem-cell.hidden { font-size: 0; background: var(--surface2); }
+
+.stats {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+.stat-box {
+  background: var(--surface2);
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.stat-value { font-size: 1.8rem; font-family: var(--font-display); color: var(--accent); }
+.stat-label { font-size: 0.7rem; color: var(--text-dim); }
+
+.anagram-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  color: var(--text);
+  font-size: 1.1rem;
+  text-align: center;
+  width: 200px;
+  margin: 20px auto;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html" class="active">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div id="ex-list">
+    <div class="eyebrow gap-16">Когнітивні тренування</div>
+    <h1 class="title gap-16">Тренуй пам'ять та увагу</h1>
+    <p class="lead gap-40">Розвивай когнітивні функції через ігрові вправи. Обирай рівень складності та тренуй мозок щодня.</p>
+
+    <div class="exercises-grid" id="exercises-grid"></div>
+  </div>
+
+  <div id="ex-runner">
+    <div style="margin-bottom: 24px;">
+      <button class="btn btn-sm btn-ghost" onclick="backToList()">← До списку вправ</button>
+    </div>
+    <div id="game-container"></div>
+  </div>
+
+</div>
+</section>
+</div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p>📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a></p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+const EXERCISES = [
+  // Увага та концентрація
+  { id: "schulte-easy", name: "Таблиці Шульте", icon: "🔢", desc: "Знайди числа від 1 до 9 по порядку", difficulty: "easy", category: "attention", func: () => initSchulte(3, 9) },
+  { id: "schulte-medium", name: "Таблиці Шульте PRO", icon: "🔢🔢", desc: "Знайди числа від 1 до 25 по порядку", difficulty: "medium", category: "attention", func: () => initSchulte(5, 25) },
+  { id: "schulte-hard", name: "Таблиці Шульте X", icon: "🔢🔢🔢", desc: "Червоно-чорна таблиця: чергуй чорні та червоні числа", difficulty: "hard", category: "attention", func: () => initSchulteHard() },
+  { id: "stroop-easy", name: "Ефект Струпа", icon: "🌈", desc: "Назви колір тексту (співпадає)", difficulty: "easy", category: "attention", func: () => initStroop('easy') },
+  { id: "stroop-medium", name: "Ефект Струпа PRO", icon: "🌈🌈", desc: "Назви колір тексту — слово іншим кольором", difficulty: "medium", category: "attention", func: () => initStroop('medium') },
+  // Оперативна пам'ять
+  { id: "memory-easy", name: "Матриця пам'яті", icon: "🧩", desc: "Запам'ятай розташування 3 квадратів на сітці 3x3", difficulty: "easy", category: "memory", func: () => initMemoryMatrix(3, 3, 2) },
+  { id: "memory-medium", name: "Матриця пам'яті PRO", icon: "🧩🧩", desc: "Запам'ятай 6 квадратів на сітці 5x5", difficulty: "medium", category: "memory", func: () => initMemoryMatrix(5, 6, 3) },
+  { id: "nback-easy", name: "N-назад (1-back)", icon: "🔄", desc: "Порівняй з попереднім символом", difficulty: "easy", category: "memory", func: () => initNBack(1) },
+  { id: "nback-medium", name: "N-назад (2-back)", icon: "🔄🔄", desc: "Порівняй з символом 2 кроки тому", difficulty: "medium", category: "memory", func: () => initNBack(2) },
+  // Мислення та вербальна гнучкість
+  { id: "anagram", name: "Анаграми", icon: "📝", desc: "Склади слово з переплутаних літер", difficulty: "medium", category: "thinking", func: () => initAnagram() },
+  { id: "associations", name: "Асоціативні ланцюжки", icon: "🔗", desc: "Знайди спільну ознаку між словами", difficulty: "medium", category: "thinking", func: () => initAssociations() },
+  // Міжпівкульна взаємодія
+  { id: "mirror", name: "Дзеркальне малювання", icon: "🪞", desc: "Малюй одночасно двома руками", difficulty: "medium", category: "motor", func: () => initMirrorDrawing() },
+  // Просторове мислення
+  { id: "cube", name: "Кубики", icon: "🧊", desc: "Знайди таку саму 3D-фігуру", difficulty: "medium", category: "spatial", func: () => initCubeTask() },
+  { id: "labyrinth", name: "Віртуальний лабіринт", icon: "🌀", desc: "Запам'ятай карту та пройди лабіринт", difficulty: "hard", category: "spatial", func: () => initLabyrinth() },
+  // Креативність
+  { id: "rat", name: "Віддалені асоціації (RAT)", icon: "💡", desc: "Знайди слово, що поєднує три інших", difficulty: "medium", category: "creative", func: () => initRAT() },
+  { id: "alternative", name: "Альтернативне використання", icon: "🎨", desc: "Знайди нестандартне використання предмета", difficulty: "medium", category: "creative", func: () => initAlternative() },
+  // Детективне око
+  { id: "differences", name: "Знайди відмінності", icon: "🔍", desc: "Знайди 7 відмінностей на картинках", difficulty: "medium", category: "visual", func: () => initDifferences() }
+];
+
+function renderExercises() {
+  const container = document.getElementById('exercises-grid');
+  container.innerHTML = EXERCISES.map(ex => `
+    <div class="ex-card" onclick="startExercise('${ex.id}')">
+      <div class="ex-icon">${ex.icon}</div>
+      <div class="ex-name">${ex.name}</div>
+      <p class="ex-desc">${ex.desc}</p>
+      <span class="difficulty ${ex.difficulty}">${ex.difficulty === 'easy' ? '⭐ Легкий' : ex.difficulty === 'medium' ? '⭐⭐ Середній' : '⭐⭐⭐ Складний'}</span>
+    </div>
+  `).join('');
+}
+
+function startExercise(id) {
+  const ex = EXERCISES.find(e => e.id === id);
+  if (!ex) return;
+  document.getElementById('ex-list').style.display = 'none';
+  document.getElementById('ex-runner').style.display = 'block';
+  ex.func();
+}
+
+function backToList() {
+  document.getElementById('ex-list').style.display = 'block';
+  document.getElementById('ex-runner').style.display = 'none';
+}
+
+// ========== ТАБЛИЦІ ШУЛЬТЕ ==========
+let schulteNext = 1, schulteTotal = 0, schulteStartTime = 0, schulteTimer = null, schulteSize = 0;
+
+function initSchulte(size, total) {
+  schulteSize = size;
+  schulteNext = 1;
+  schulteTotal = total;
+  const numbers = Array.from({length: total}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+  const container = document.getElementById('game-container');
+  container.innerHTML = `
+    <div class="game-container">
+      <h2 class="title">Знайди число <span id="schulte-next" style="color:var(--accent);">1</span></h2>
+      <div class="stats"><div class="stat-box"><div class="stat-value" id="schulte-time">0.0</div><div class="stat-label">секунд</div></div></div>
+      <div class="schulte-grid" style="grid-template-columns: repeat(${size}, 70px);">
+        ${numbers.map(n => `<div class="schulte-cell" data-num="${n}" onclick="clickSchulte(${n}, this)">${n}</div>`).join('')}
+      </div>
+    </div>
+  `;
+  schulteStartTime = Date.now();
+  if (schulteTimer) clearInterval(schulteTimer);
+  schulteTimer = setInterval(() => {
+    document.getElementById('schulte-time').textContent = ((Date.now() - schulteStartTime) / 1000).toFixed(1);
+  }, 100);
+}
+
+function clickSchulte(num, el) {
+  if (num === schulteNext) {
+    el.classList.add('correct');
+    schulteNext++;
+    document.getElementById('schulte-next').textContent = schulteNext <= schulteTotal ? schulteNext : '✓';
+    if (schulteNext > schulteTotal) {
+      clearInterval(schulteTimer);
+      const time = ((Date.now() - schulteStartTime) / 1000).toFixed(1);
+      setTimeout(() => {
+        document.getElementById('game-container').innerHTML += `<div class="stats"><div class="stat-box"><div class="stat-value">${time}с</div><div class="stat-label">Готово!</div></div><button class="btn btn-primary" onclick="initSchulte(${schulteSize}, ${schulteTotal})">Ще раз</button></div>`;
+        showToast(`✓ Час: ${time} секунд`);
+      }, 300);
+    }
+  } else {
+    el.style.background = 'rgba(255,107,107,0.2)';
+    setTimeout(() => el.style.background = '', 300);
+  }
+}
+
+function initSchulteHard() {
+  const container = document.getElementById('game-container');
+  container.innerHTML = `
+    <div class="game-container">
+      <h2 class="title">Червоно-чорна таблиця Шульте</h2>
+      <p>Чергуй: 1 чорне, 24 червоне, 2 чорне, 23 червоне...</p>
+      <div class="stats"><div class="stat-box"><div class="stat-value" id="schulte-hard-time">0.0</div><div class="stat-label">секунд</div></div></div>
+      <button class="btn btn-primary" onclick="startSchulteHard()">Почати</button>
+    </div>
+  `;
+}
+
+function startSchulteHard() {
+  showToast("Складний режим в розробці. Спробуйте інші вправи!");
+  backToList();
+}
+
+// ========== ЕФЕКТ СТРУПА ==========
+const STROOP_WORDS = [
+  { word: "ЧЕРВОНИЙ", color: "#ff6b6b", name: "червоний" },
+  { word: "СИНІЙ", color: "#6b9bff", name: "синій" },
+  { word: "ЗЕЛЕНИЙ", color: "#6ddec0", name: "зелений" },
+  { word: "ЖОВТИЙ", color: "#e8c070", name: "жовтий" },
+  { word: "ФІОЛЕТОВИЙ", color: "#b77cff", name: "фіолетовий" }
+];
+let stroopScore = 0, stroopTotal = 0, stroopCurrent = null, stroopDifficulty = 'medium';
+
+function initStroop(difficulty) {
+  stroopDifficulty = difficulty;
+  stroopScore = 0;
+  stroopTotal = 0;
+  renderStroopQuestion();
+}
+
+function renderStroopQuestion() {
+  let word, colorEl;
+  if (stroopDifficulty === 'easy') {
+    word = STROOP_WORDS[Math.floor(Math.random() * STROOP_WORDS.length)];
+    colorEl = word;
+  } else {
+    word = STROOP_WORDS[Math.floor(Math.random() * STROOP_WORDS.length)];
+    do { colorEl = STROOP_WORDS[Math.floor(Math.random() * STROOP_WORDS.length)]; }
+    while (colorEl.name === word.name);
+  }
+  stroopCurrent = colorEl.name;
+  const container = document.getElementById('game-container');
+  container.innerHTML = `
+    <div class="game-container">
+      <h2 class="title">Який <em>колір</em> тексту?</h2>
+      <div style="font-size: 4rem; font-weight: bold; margin: 40px 0; color: ${colorEl.color};">${word.word}</div>
+      <div class="stats"><div class="stat-box"><div class="stat-value" id="stroop-score">${stroopScore}</div><div class="stat-label">правильно</div></div><div class="stat-box"><div class="stat-value" id="stroop-total">${stroopTotal}</div><div class="stat-label">всього</div></div></div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">${STROOP_WORDS.map(c => `<button class="btn btn-sm btn-ghost" onclick="answerStroop('${c.name}')" style="background:${c.color}20; border-color:${c.color};">${c.name}</button>`).join('')}</div>
+    </div>
+  `;
+}
+
+function answerStroop(answer) {
+  stroopTotal++;
+  if (answer === stroopCurrent) stroopScore++;
+  document.getElementById('stroop-score').textContent = stroopScore;
+  document.getElementById('stroop-total').textContent = stroopTotal;
+  if (stroopTotal >= 10) {
+    const pct = Math.round(stroopScore / stroopTotal * 100);
+    document.getElementById('game-container').innerHTML += `<div class="stats"><div class="stat-box"><div class="stat-value">${pct}%</div><div class="stat-label">результат</div></div><button class="btn btn-primary" onclick="initStroop('${stroopDifficulty}')">Ще раз</button></div>`;
+    showToast(`Результат: ${pct}% правильних відповідей`);
+  } else {
+    renderStroopQuestion();
+  }
+}
+
+// ========== МАТРИЦЯ ПАМ'ЯТІ ==========
+let memoryMatrixTargets = [], memoryMatrixClicks = 0, memoryMatrixSize = 0;
+
+function initMemoryMatrix(size, targetsCount, showTimeSec) {
+  memoryMatrixSize = size;
+  const total = size * size;
+  const targets = new Set();
+  while (targets.size < targetsCount) targets.add(Math.floor(Math.random() * total));
+  memoryMatrixTargets = Array.from(targets);
+  memoryMatrixClicks = 0;
+  renderMemoryMatrix(size, targets, true);
+  setTimeout(() => renderMemoryMatrix(size, targets, false), showTimeSec * 1000);
+}
+
+function renderMemoryMatrix(size, targets, show) {
+  const total = size * size;
+  let html = `<div class="game-container"><h2 class="title">Запам'ятай розташування квадратів</h2><div class="memory-grid" style="grid-template-columns: repeat(${size}, 70px);">`;
+  for (let i = 0; i < total; i++) {
+    const isTarget = targets.has(i);
+    html += `<div class="mem-cell ${show && isTarget ? 'revealed' : 'hidden'}" data-idx="${i}" onclick="clickMemoryMatrix(${i}, ${isTarget})">${show && isTarget ? '⬜' : '?'}</div>`;
+  }
+  html += `</div><div class="stats"><div class="stat-box"><div class="stat-value" id="memory-progress">0/${memoryMatrixTargets.length}</div></div></div></div>`;
+  document.getElementById('game-container').innerHTML = html;
+}
+
+function clickMemoryMatrix(idx, isTarget) {
+  if (memoryMatrixTargets.includes(idx)) {
+    const el = document.querySelector(`.mem-cell[data-idx="${idx}"]`);
+    if (el.classList.contains('matched')) return;
+    el.classList.add('matched');
+    el.textContent = '✓';
+    memoryMatrixClicks++;
+    document.getElementById('memory-progress').textContent = `${memoryMatrixClicks}/${memoryMatrixTargets.length}`;
+    if (memoryMatrixClicks === memoryMatrixTargets.length) {
+      setTimeout(() => {
+        document.getElementById('game-container').innerHTML += `<div class="stats"><div class="stat-box"><div class="stat-value">🎉</div><div class="stat-label">Готово!</div></div><button class="btn btn-primary" onclick="initMemoryMatrix(${memoryMatrixSize}, ${memoryMatrixTargets.length}, 3)">Ще раз</button></div>`;
+        showToast('Вітаю! Всі квадрати знайдені!');
+      }, 300);
+    }
+  }
+}
+
+// ========== N-BACK ==========
+let nbackLevel = 1, nbackSequence = [], nbackUserInput = [], nbackSymbols = ['★','◆','●','▲','■'];
+
+function initNBack(n) {
+  nbackLevel = n;
+  nbackSequence = Array.from({length: 15}, () => nbackSymbols[Math.floor(Math.random() * nbackSymbols.length)]);
+  nbackUserInput = [];
+  renderNBack(0);
+}
+
+function renderNBack(index) {
+  if (index >= nbackSequence.length) {
+    let correct = 0;
+    for (let i = nbackLevel; i < nbackSequence.length; i++) {
+      if (nbackUserInput[i] === (nbackSequence[i] === nbackSequence[i - nbackLevel])) correct++;
+    }
+    const pct = Math.round(correct / (nbackSequence.length - nbackLevel) * 100);
+    document.getElementById('game-container').innerHTML = `<div class="game-container"><div class="stats"><div class="stat-box"><div class="stat-value">${pct}%</div><div class="stat-label">точність</div></div><button class="btn btn-primary" onclick="initNBack(${nbackLevel})">Ще раз</button></div></div>`;
+    showToast(`Результат: ${pct}%`);
+    return;
+  }
+  const container = document.getElementById('game-container');
+  container.innerHTML = `
+    <div class="game-container">
+      <h2 class="title">${nbackSequence[index]}</h2>
+      <div class="stats"><div class="stat-box"><div class="stat-value">${index + 1}/${nbackSequence.length}</div><div class="stat-label">крок</div></div></div>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button class="btn btn-primary" onclick="answerNBack(${index}, true)">✓ Так (збіг)</button>
+        <button class="btn btn-ghost" onclick="answerNBack(${index}, false)">✗ Ні (не збіг)</button>
+      </div>
+    </div>
+  `;
+}
+
+function answerNBack(index, answer) {
+  const isMatch = index >= nbackLevel && nbackSequence[index] === nbackSequence[index - nbackLevel];
+  nbackUserInput[index] = answer;
+  renderNBack(index + 1);
+}
+
+// ========== АНАГРАМИ ==========
+const ANAGRAMS = [
+  { scrambled: "ОКНВ", answer: "ВІКНО" },
+  { scrambled: "АЗАРХЕ", answer: "ХАЗЯЄР" },
+  { scrambled: "ТИЛСО", answer: "ЛИСТО" },
+  { scrambled: "РАДІСТЬ", answer: "РАДІСТЬ" }
+];
+let anagramIndex = 0, anagramScore = 0;
+
+function initAnagram() {
+  anagramIndex = 0;
+  anagramScore = 0;
+  renderAnagram();
+}
+
+function renderAnagram() {
+  if (anagramIndex >= ANAGRAMS.length) {
+    document.getElementById('game-container').innerHTML = `<div class="game-container"><div class="stats"><div class="stat-box"><div class="stat-value">${anagramScore}/${ANAGRAMS.length}</div><div class="stat-label">результат</div></div><button class="btn btn-primary" onclick="initAnagram()">Ще раз</button></div></div>`;
+    showToast(`Результат: ${anagramScore}/${ANAGRAMS.length}`);
+    return;
+  }
+  const a = ANAGRAMS[anagramIndex];
+  const container = document.getElementById('game-container');
+  container.innerHTML = `
+    <div class="game-container">
+      <h2 class="title">Склади слово з літер</h2>
+      <div style="font-size: 2rem; letter-spacing: 0.2em; margin: 30px;">${a.scrambled.split('').join(' ')}</div>
+      <input type="text" id="anagram-input" class="anagram-input" placeholder="Введіть слово">
+      <div><button class="btn btn-primary" onclick="checkAnagram()">Перевірити</button></div>
+      <div class="stats"><div class="stat-box"><div class="stat-value">${anagramIndex + 1}/${ANAGRAMS.length}</div><div class="stat-label">питання</div></div></div>
+    </div>
+  `;
+}
+
+function checkAnagram() {
+  const input = document.getElementById('anagram-input').value.toUpperCase();
+  if (input === ANAGRAMS[anagramIndex].answer) {
+    anagramScore++;
+    showToast("✓ Правильно!");
+  } else {
+    showToast(`✗ Правильна відповідь: ${ANAGRAMS[anagramIndex].answer}`);
+  }
+  anagramIndex++;
+  renderAnagram();
+}
+
+// ========== ІНШІ ВПРАВИ (заглушки з поясненнями) ==========
+function initAssociations() { showToast("Знайди спільну ознаку між словами. Приклад: 'Дерево' і 'Телефон' → 'Зв'язок'"); backToList(); }
+function initMirrorDrawing() { showToast("Уяви, що малюєш метелика одночасно двома руками. Це тренує міжпівкульну взаємодію."); backToList(); }
+function initCubeTask() { showToast("Знайди таку саму 3D-фігуру серед обернутих. Тренує просторове мислення."); backToList(); }
+function initLabyrinth() { showToast("Запам'ятай карту лабіринту та пройди його по пам'яті."); backToList(); }
+function initRAT() { showToast("Знайди слово, що поєднує три інших. Приклад: Берег, Квиток, Пісок → Золотий"); backToList(); }
+function initAlternative() { showToast("Придумай якомога більше нестандартних способів використання звичайного предмета."); backToList(); }
+function initDifferences() { showToast("Знайди 7 відмінностей між двома картинками."); backToList(); }
+
+renderExercises();
+</script>
+</body>
+</html>

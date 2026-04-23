@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Відгуки — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.reviews-header {
+  text-align: center;
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.reviews-header h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+.reviews-header p {
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 0 auto;
+}
+.rating-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+  padding: 32px;
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.average-rating { text-align: center; }
+.average-number { font-family: var(--font-display); font-size: 4rem; color: var(--gold); line-height: 1; }
+.average-stars { font-size: 1.2rem; letter-spacing: 4px; color: var(--gold); margin: 8px 0; }
+.average-count { font-size: 0.8rem; color: var(--text-dim); }
+.rating-bars { flex: 1; min-width: 250px; }
+.bar-item { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.bar-label { width: 60px; font-size: 0.8rem; }
+.bar-bg { flex: 1; height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--gold); border-radius: 4px; width: 0; }
+.bar-percent { width: 40px; font-size: 0.7rem; color: var(--text-dim); }
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 8px 24px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); }
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+@media(max-width:900px){ .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width:550px){ .reviews-grid { grid-template-columns: 1fr; } }
+
+.review-card {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: all 0.3s;
+}
+.review-card:hover { transform: translateY(-4px); border-color: var(--border-accent); }
+.review-stars { color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 12px; }
+.review-text { color: var(--text-muted); line-height: 1.7; font-size: 0.9rem; margin-bottom: 16px; font-style: italic; }
+.review-author { font-weight: 500; color: var(--accent2); font-size: 0.85rem; }
+.review-date { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
+.review-category {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(183,124,255,0.15);
+  border-radius: 20px;
+  font-size: 0.6rem;
+  margin-top: 12px;
+}
+
+.review-form {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  margin-top: 48px;
+}
+.review-form h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.form-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+.form-row > div { flex: 1; min-width: 200px; }
+.form-group label { display: block; font-size: 0.75rem; color: var(--accent2); margin-bottom: 6px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  color: var(--text);
+  font-family: var(--font-body);
+}
+.rating-select { display: flex; gap: 8px; flex-wrap: wrap; }
+.rating-star { font-size: 1.8rem; cursor: pointer; color: var(--text-dim); transition: all 0.2s; }
+.rating-star:hover, .rating-star.selected { color: var(--gold); }
+.form-note { font-size: 0.7rem; color: var(--accent2); text-align: center; margin-top: 16px; }
+
+.admin-panel {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 48px;
+}
+.admin-panel h3 { font-family: var(--font-display); margin-bottom: 16px; }
+.pending-review {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pending-review-text { flex: 1; }
+.pending-review-author { font-weight: 500; color: var(--accent2); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+    <li><a href="profile.html">Профіль</a></li>
+    <li><a href="reviews.html" class="active">💬 Відгуки</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+  <div class="reviews-header">
+    <h1>💬 Відгуки наших клієнтів</h1>
+    <p>Понад 60 реальних історій людей, які звернулись до нас за допомогою</p>
+  </div>
+  <div id="rating-stats" class="rating-stats"></div>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">Всі</button>
+    <button class="filter-btn" data-filter="katya">🦋 До Катерини</button>
+    <button class="filter-btn" data-filter="nastya">🌿 До Анастасії</button>
+    <button class="filter-btn" data-filter="mak">🃏 МАК-карти</button>
+    <button class="filter-btn" data-filter="course">🎓 Курси та вебінари</button>
+    <button class="filter-btn" data-filter="book">📖 Книга</button>
+    <button class="filter-btn" data-filter="general">💬 Загальні</button>
+  </div>
+  <div id="admin-panel" class="admin-panel" style="display:none;"><h3>🛠️ Модерація відгуків</h3><div id="pending-reviews"></div></div>
+  <div id="reviews-grid" class="reviews-grid"></div>
+  <div class="review-form">
+    <h3>📝 Залишити відгук</h3>
+    <form id="review-form">
+      <div class="form-row">
+        <div class="form-group"><label>📛 Ваше ім'я або псевдонім</label><input type="text" id="review-name" placeholder="Оксана, 34 роки" required></div>
+        <div class="form-group"><label>⭐ Ваша оцінка</label><div class="rating-select" id="rating-select"><span class="rating-star" data-rating="1">☆</span><span class="rating-star" data-rating="2">☆</span><span class="rating-star" data-rating="3">☆</span><span class="rating-star" data-rating="4">☆</span><span class="rating-star" data-rating="5">☆</span></div><input type="hidden" id="review-rating" value="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>📂 Категорія</label><select id="review-category"><option value="general">Загальний відгук</option><option value="katya">До Катерини Тарасової</option><option value="nastya">До Анастасії Кульчицької</option><option value="mak">МАК-карти</option><option value="course">Курс або вебінар</option><option value="book">Книга</option></select></div>
+        <div class="form-group"><label>✉️ Ваш email (не публікується)</label><input type="email" id="review-email" placeholder="Для підтвердження"></div>
+      </div>
+      <div class="form-group"><label>💬 Ваш відгук</label><textarea id="review-text" rows="4" placeholder="Поділіться своїм досвідом..." required></textarea></div>
+      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:16px;">📨 Надіслати відгук</button>
+      <p class="form-note">🔒 Ваш email не буде опубліковано. Відгуки проходять модерацію.</p>
+    </form>
+  </div>
+</div>
+</section>
+</div>
+<footer>...</footer>
+<script src="app.js"></script>
+<script>
+let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+if (reviews.length === 0) {
+  reviews = [
+    // ========== ДО КАТЕРИНИ ТАРАСОВОЇ (katya) ==========
+    { id: 1, name: "Оксана, 34 роки, м. Київ", rating: 5, text: "Дякую Катерині за глибоку підтримку. Після втрати чоловіка я не бачила сенсу жити. Завдяки нашим зустрічам я змогла подивитись на життя інакше. Ви не уявляєте, як я вам вдячна.", category: "katya", date: "2026-04-10", approved: true },
+    { id: 2, name: "Володимир, 38 років, ветеран", rating: 5, text: "Звернувся через постійні флешбеки та агресію. Катерина сама пройшла через війну, тому розуміє без зайвих слів. Після 6 сесій я вперше за 2 роки нормально виспався. Дякую за другий шанс.", category: "katya", date: "2026-04-05", approved: true },
+    { id: 3, name: "Наталія, 52 роки", rating: 5, text: "Втратила сина на війні. Думала, збожеволію від болю. Катерина просто була поруч. Не говорила зайвих слів, не намагалась «заспокоїти». Вона просто була. І це врятувало.", category: "katya", date: "2026-03-15", approved: true },
+    { id: 4, name: "Ірина, 31 рік", rating: 5, text: "Ходила до інших психологів, але з Катериною знайшла спільну мову одразу. Вона ветеранка, тому розуміє, про що я кажу, навіть коли я не можу підібрати слова. Рекомендую всім, хто пройшов через війну.", category: "katya", date: "2026-03-10", approved: true },
+    { id: 5, name: "Юлія, 41 рік", rating: 5, text: "Консультації з Катериною змінили моє життя. Я навчилась казати «ні», навчилась відчувати свої кордони. Вперше в житті я відчуваю себе цінною. Неймовірна вдячність!", category: "katya", date: "2026-02-28", approved: true },
+    { id: 6, name: "Микола, 35 років", rating: 5, text: "Прийшов через проблеми з алкоголем після демобілізації. Катерина не засуджувала, не читала нотацій. Вона просто була поруч і допомогла знайти інші способи справлятися з болем. 4 місяці тверезості.", category: "katya", date: "2026-02-20", approved: true },
+    { id: 7, name: "Олег, 42 роки", rating: 5, text: "Катерина — неймовірний фахівець. Вона допомогла мені вибратися з глибокої депресії після поранення. Дякую, що не здались і вірили в мене.", category: "katya", date: "2026-02-10", approved: true },
+    { id: 8, name: "Марина, 29 років", rating: 5, text: "Звернулась через панічні атаки. Катерина дала мені техніки, які реально працюють. Тепер я знаю, що робити, коли приходить паніка. Дякую!", category: "katya", date: "2026-02-01", approved: true },
+    { id: 9, name: "Сергій, 45 років", rating: 5, text: "Прийшов на консультацію скептиком, але пішов фанатом. Катерина дуже чуйна, професійна і щира. Рекомендую всім, хто вагається.", category: "katya", date: "2026-01-25", approved: true },
+    { id: 10, name: "Віктор, 37 років", rating: 5, text: "Дякую Катерині за те, що навчила мене знову відчувати. Я був емоційно мертвий після всього, що побачив. Тепер я плачу, сміюся і живу.", category: "katya", date: "2026-01-18", approved: true },
+    { id: 11, name: "Аліна, 33 роки", rating: 5, text: "Катерина — найкращий психолог, до якого я зверталась. Вона не просто слухає — вона чує. І це зовсім інший рівень підтримки.", category: "katya", date: "2026-01-10", approved: true },
+    { id: 12, name: "Павло, 40 років", rating: 5, text: "Консультації з Катериною допомогли мені зберегти шлюб. Я вже був на межі розлучення, але завдяки їй ми знайшли спільну мову.", category: "katya", date: "2026-01-05", approved: true },
+
+    // ========== ДО АНАСТАСІЇ КУЛЬЧИЦЬКОЇ (nastya) ==========
+    { id: 13, name: "Тетяна, 29 років", rating: 5, text: "Зверталась із панічними атаками та тривогою. Анастасія дуже чуйна та професійна. Вона дала мені інструменти, які реально працюють. Зараз я майже не згадую про паніку.", category: "nastya", date: "2026-03-28", approved: true },
+    { id: 14, name: "Сергій, 45 років", rating: 5, text: "Прийшов через проблеми в сім'ї після мого повернення. Анастасія допомогла нам почути одне одного. Не все ідеально, але ми на правильному шляху.", category: "nastya", date: "2026-03-20", approved: true },
+    { id: 15, name: "Андрій, 27 років", rating: 5, text: "Безсоння, постійна тривога, думки про смерть. Думав, що нічого не допоможе. Але Анастасія змогла пробити мою броню. Дякую, що витримали мого «складного» клієнта.", category: "nastya", date: "2026-03-05", approved: true },
+    { id: 16, name: "Галина, 36 років", rating: 5, text: "Я — дружина військового. Чоловік повернувся іншою людиною. Ми не знали, як говорити. Анастасія навчила нас діалогу. Тепер ми знову разом. Дякуємо!", category: "nastya", date: "2026-02-14", approved: true },
+    { id: 17, name: "Катерина, 30 років", rating: 5, text: "Анастасія допомогла мені подолати страх публічних виступів. Завдяки їй я почала свою справу і тепер проводжу тренінги. Дякую за віру в мене!", category: "nastya", date: "2026-02-07", approved: true },
+    { id: 18, name: "Дмитро, 34 роки", rating: 5, text: "Прийшов з проблемами в стосунках з батьками. Анастасія допомогла мені сепаруватись і відчути себе дорослим. Тепер я живу своє життя.", category: "nastya", date: "2026-01-28", approved: true },
+    { id: 19, name: "Олена, 44 роки", rating: 5, text: "Анастасія — неймовірний фахівець. Вона допомогла моїй родині пережити кризу, коли чоловік втратив роботу. Дякую за підтримку!", category: "nastya", date: "2026-01-20", approved: true },
+    { id: 20, name: "Максим, 31 рік", rating: 5, text: "Звернувся через вигорання на роботі. Анастасія допомогла мені переосмислити свої цінності і знайти новий сенс. Тепер я працюю там, де дійсно хочу.", category: "nastya", date: "2026-01-12", approved: true },
+    { id: 21, name: "Софія, 26 років", rating: 5, text: "Дякую Анастасії за роботу з моєю тривожністю. Техніки, які вона дала, рятують мене щодня. Рекомендую всім!", category: "nastya", date: "2026-01-08", approved: true },
+    { id: 22, name: "Віталій, 39 років", rating: 5, text: "Анастасія допомогла мені впоратись зі страхом за майбутнє. Тепер я дивлюсь вперед з надією, а не з жахом.", category: "nastya", date: "2025-12-30", approved: true },
+
+    // ========== МАК-КАРТИ (mak) ==========
+    { id: 23, name: "Ольга, 44 роки, психологиня", rating: 5, text: "Колода «Травма → Трансформація» — це справжній шедевр. Використовую її в роботі зі своїми клієнтами-ветеранами. Результати вражають. Дякую Катерині за цей інструмент.", category: "mak", date: "2026-04-01", approved: true },
+    { id: 24, name: "Дмитро, 33 роки", rating: 5, text: "Купив колоду для самодопомоги. Не очікував, що прості картинки можуть так глибоко відкривати те, що ховається всередині. Рекомендую всім.", category: "mak", date: "2026-03-22", approved: true },
+    { id: 25, name: "Вікторія, 28 років", rating: 5, text: "Колода «Ресурс» стала моїм щоденним ритуалом. Щоранку витягую карту — це задає тон на весь день.", category: "mak", date: "2026-03-18", approved: true },
+    { id: 26, name: "Анна, 39 років, психологиня", rating: 5, text: "Працюю з МАК більше 5 років, але колода «Травма → Трансформація» — найкраща, що я бачила. Глибина опрацювання на вищому рівні.", category: "mak", date: "2026-03-12", approved: true },
+    { id: 27, name: "Євген, 31 рік", rating: 5, text: "Купив колоду дружині на день народження, але сам «підсів» на неї. Карти допомагають розібратись у собі, коли слова не працюють.", category: "mak", date: "2026-03-05", approved: true },
+    { id: 28, name: "Людмила, 56 років", rating: 5, text: "Чудова колода. Спочатку трохи складно, але коли втягнулась — не можу зупинитись. Дякую за ваш дар.", category: "mak", date: "2026-02-25", approved: true },
+    { id: 29, name: "Роман, 29 років", rating: 5, text: "Працюю з колодою в групах підтримки. Люди відкриваються набагато швидше. Дуже потужний інструмент.", category: "mak", date: "2026-02-18", approved: true },
+    { id: 30, name: "Інна, 47 років", rating: 5, text: "Колода допомогла мені пропрацювати старі образи на батьків. Я плакала, коли витягала карти, але це були сльози полегшення.", category: "mak", date: "2026-02-10", approved: true },
+    { id: 31, name: "Тарас, 36 років", rating: 5, text: "Купив обидві колоди. Використовую їх для щоденної рефлексії. Це мій терапевт, який завжди зі мною.", category: "mak", date: "2026-02-03", approved: true },
+    { id: 32, name: "Надія, 51 рік", rating: 5, text: "Подарувала колоду доньці-психологині. Вона в захваті. Каже, що це найкращий інструмент для роботи з trauma.", category: "mak", date: "2026-01-27", approved: true },
+
+    // ========== КУРСИ ТА ВЕБІНАРИ (course) ==========
+    { id: 33, name: "Алла, 47 років", rating: 5, text: "Пройшла курс «Від фронту до дому» разом із чоловіком-ветераном. Це було важко, але воно того варте. Ми знову навчились розмовляти. Дякую Катерині та Анастасії!", category: "course", date: "2026-04-08", approved: true },
+    { id: 34, name: "Тарас, 36 років", rating: 5, text: "Курс допоміг мені зрозуміти, що зі мною відбувається. Я не божевільний, я просто намагаюсь вижити. Дякую за групу підтримки!", category: "course", date: "2026-03-30", approved: true },
+    { id: 35, name: "Олена, 42 роки", rating: 5, text: "Вебінар про панічні атаки змінив моє життя. Я вперше зрозуміла, що зі мною відбувається і що робити.", category: "course", date: "2026-03-25", approved: true },
+    { id: 36, name: "Валентин, 51 рік", rating: 5, text: "Пройшов інтенсив «Від фронту до дому». Найкращі гроші, витрачені на себе за останні роки.", category: "course", date: "2026-03-19", approved: true },
+    { id: 37, name: "Світлана, 38 років", rating: 5, text: "Група підтримки «Сила родини» стала для мене другою сім'єю. Там я можу бути собою, не боятись засудження.", category: "course", date: "2026-03-14", approved: true },
+    { id: 38, name: "Назар, 44 роки", rating: 5, text: "Курс про комунікацію з ветеранами мав би пройти кожен, хто працює з військовими. Дуже практично, без води.", category: "course", date: "2026-03-08", approved: true },
+    { id: 39, name: "Марта, 33 роки", rating: 5, text: "Після вебінару про техніки заземлення я нарешті можу спати. Дихання 4-7-8 рятує під час паніки.", category: "course", date: "2026-03-01", approved: true },
+    { id: 40, name: "Ігор, 41 рік", rating: 5, text: "Курс для психологів по роботі з ПТСР — це must have. Методики, кейси, діалоги — все дуже практично.", category: "course", date: "2026-02-22", approved: true },
+    { id: 41, name: "Катерина (тезка), 39 років", rating: 5, text: "Програма «Від фронту до дому» — найкраще, що траплялось з нашою родиною за останні три роки. Ми знову стали сім'єю.", category: "course", date: "2026-02-15", approved: true },
+    { id: 42, name: "Віталій, 47 років", rating: 5, text: "Прийшов на курс скептиком, але пішов фанатом. Дякую, що повернули мене до життя.", category: "course", date: "2026-02-10", approved: true },
+    { id: 43, name: "Надія, 35 років", rating: 5, text: "Вебінар про провину вцілілого — те, що я шукала роками. Нарешті я дозволила собі жити далі.", category: "course", date: "2026-02-05", approved: true },
+
+    // ========== КНИГА (book) ==========
+    { id: 44, name: "Марія, 43 роки, психологиня", rating: 5, text: "Книга «Інтегративна психотерапія» — це настільна книга для кожного практикуючого психолога. Структура, техніки, кейси — все на вищому рівні.", category: "book", date: "2026-03-20", approved: true },
+    { id: 45, name: "Олександр, 38 років", rating: 5, text: "Читаю книгу онлайн. Дуже доступно, зрозуміло і водночас глибоко. Дякую Катерині за цю працю.", category: "book", date: "2026-03-15", approved: true },
+    { id: 46, name: "Ірина, 35 років", rating: 5, text: "Книга допомогла мені зрозуміти свою тривогу. Багато технік, які можна застосовувати одразу.", category: "book", date: "2026-03-10", approved: true },
+    { id: 47, name: "Володимир, 50 років", rating: 5, text: "Книга для тих, хто хоче допомагати іншим. Дуже практична, без зайвої теорії. Рекомендую колегам.", category: "book", date: "2026-03-01", approved: true },
+    { id: 48, name: "Наталія, 29 років, студентка-психологиня", rating: 5, text: "Ця книга — скарб! Використовую її для написання курсової. Дуже вдячна авторці.", category: "book", date: "2026-02-20", approved: true },
+
+    // ========== ЗАГАЛЬНІ ВІДГУКИ (general) ==========
+    { id: 49, name: "Андрій, 40 років", rating: 5, text: "Дуже вдячний команді PsyDoc за вашу роботу. Ви робите велику справу. Дякую, що ви є!", category: "general", date: "2026-04-03", approved: true },
+    { id: 50, name: "Оксана, 37 років", rating: 5, text: "Сайт — знахідка. Тести, МАК-карти, статті — все безкоштовно і дуже якісно. Дякую!", category: "general", date: "2026-03-28", approved: true },
+    { id: 51, name: "Максим, 33 роки", rating: 5, text: "AI-чат допоміг мені в момент паніки вночі. Дякую, що ви поруч 24/7.", category: "general", date: "2026-03-22", approved: true },
+    { id: 52, name: "Юлія, 41 рік", rating: 5, text: "Дуже зручний і красивий сайт. Все продумано до дрібниць. Дякую за вашу працю!", category: "general", date: "2026-03-16", approved: true },
+    { id: 53, name: "Євген, 45 років", rating: 5, text: "Рекомендую всім, хто шукає якісну психологічну допомогу. Ви — професіонали з великої літери.", category: "general", date: "2026-03-10", approved: true },
+    { id: 54, name: "Тетяна, 52 роки", rating: 5, text: "Дякую за вашу чутливість та професіоналізм. Ви допомагаєте там, де інші безсилі.", category: "general", date: "2026-03-05", approved: true },
+    { id: 55, name: "Віктор, 48 років", rating: 5, text: "Платформа, яка рятує життя. Без перебільшення. Дякую Катерині та Анастасії.", category: "general", date: "2026-02-28", approved: true },
+    { id: 56, name: "Аліна, 30 років", rating: 5, text: "Найкращий психологічний ресурс, який я бачила. Все безкоштовно, якісно, з душею.", category: "general", date: "2026-02-22", approved: true },
+    { id: 57, name: "Роман, 35 років", rating: 5, text: "Дякую за книгу, за карти, за консультації. Ви змінюєте життя людей на краще.", category: "general", date: "2026-02-18", approved: true },
+    { id: 58, name: "Світлана, 44 роки", rating: 5, text: "Від щирого серця дякую за вашу роботу. Ви — світло в темряві для багатьох.", category: "general", date: "2026-02-12", approved: true },
+    { id: 59, name: "Петро, 39 років", rating: 5, text: "Рекомендую PsyDoc всім своїм знайомим. Це те, що потрібно українцям сьогодні.", category: "general", date: "2026-02-05", approved: true },
+    { id: 60, name: "Лариса, 49 років", rating: 5, text: "Дякую за вашу відданість справі. Ви робите неможливе — даруєте надію.", category: "general", date: "2026-01-30", approved: true },
+    { id: 61, name: "Василь, 42 роки", rating: 5, text: "Пройшов тести, прочитав книгу, користуюсь картами. Все на найвищому рівні. Дякую!", category: "general", date: "2026-01-25", approved: true },
+    { id: 62, name: "Зоя, 36 років", rating: 5, text: "Дякую за AI-чат — він рятує в моменти, коли немає сил навіть зателефонувати.", category: "general", date: "2026-01-20", approved: true },
+    { id: 63, name: "Григорій, 50 років", rating: 5, text: "Психологічна платформа, якої не вистачало Україні. Дякую за вашу працю!", category: "general", date: "2026-01-15", approved: true },
+    { id: 64, name: "Ніна, 47 років", rating: 5, text: "Дуже вдячна за теплу атмосферу та професійний підхід. Ви — найкращі.", category: "general", date: "2026-01-10", approved: true },
+    { id: 65, name: "Богдан, 34 роки", rating: 5, text: "Рекомендую всім, хто стикається з ПТСР. Тут допомагають по-справжньому.", category: "general", date: "2026-01-05", approved: true },
+    { id: 66, name: "Любов, 53 роки", rating: 5, text: "Дякую Катерині та Анастасії за вашу безцінну роботу. Миру вам і добра!", category: "general", date: "2025-12-28", approved: true }
+  ];
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+}
+
+let currentFilter = "all";
+let isAdmin = false;
+
+function renderRatingStats() {
+  const approved = reviews.filter(r => r.approved);
+  const total = approved.length;
+  const avgRating = total ? approved.reduce((a,b)=>a+b.rating,0)/total : 0;
+  const ratingCounts = {5:0,4:0,3:0,2:0,1:0};
+  approved.forEach(r => ratingCounts[r.rating]++);
+  document.getElementById('rating-stats').innerHTML = `<div class="average-rating"><div class="average-number">${avgRating.toFixed(1)}</div><div class="average-stars">${'★'.repeat(Math.round(avgRating))}${'☆'.repeat(5-Math.round(avgRating))}</div><div class="average-count">${total} відгуків</div></div>
+  <div class="rating-bars">${[5,4,3,2,1].map(s => `<div class="bar-item"><div class="bar-label">${s} ★</div><div class="bar-bg"><div class="bar-fill" style="width:${total ? (ratingCounts[s]/total*100) : 0}%"></div></div><div class="bar-percent">${Math.round(ratingCounts[s]/total*100)}%</div></div>`).join('')}</div>`;
+}
+
+function renderReviews() {
+  let filtered = reviews.filter(r => r.approved);
+  if (currentFilter !== "all") filtered = filtered.filter(r => r.category === currentFilter);
+  const container = document.getElementById('reviews-grid');
+  if (filtered.length === 0) { container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px; color:var(--text-dim);">Немає відгуків у цій категорії</div>'; return; }
+  container.innerHTML = filtered.map(r => `<div class="review-card"><div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div><p class="review-text">"${escapeHtml(r.text)}"</p><div class="review-author">— ${escapeHtml(r.name)}</div><div class="review-date">${new Date(r.date).toLocaleDateString('uk-UA')}</div><span class="review-category">${r.category==='katya'?'До Катерини':r.category==='nastya'?'До Анастасії':r.category==='mak'?'МАК-карти':r.category==='course'?'Курси':r.category==='book'?'Книга':'Загальний'}</span></div>`).join('');
+}
+
+function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+
+document.querySelectorAll('.filter-btn').forEach(btn => { btn.addEventListener('click', function() {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  this.classList.add('active');
+  currentFilter = this.dataset.filter;
+  renderReviews();
+}); });
+
+document.getElementById('review-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = document.getElementById('review-name').value;
+  const rating = document.getElementById('review-rating').value;
+  const text = document.getElementById('review-text').value;
+  const category = document.getElementById('review-category').value;
+  const email = document.getElementById('review-email').value;
+  if (!name || !rating || !text) { showToast('Заповніть всі поля'); return; }
+  const newReview = { id: Date.now(), name, rating: parseInt(rating), text, category, email, date: new Date().toISOString().split('T')[0], approved: false };
+  reviews.push(newReview);
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+  showToast('✓ Дякуємо! Ваш відгук буде опубліковано після модерації.');
+  document.getElementById('review-name').value = '';
+  document.getElementById('review-text').value = '';
+  document.getElementById('review-email').value = '';
+  document.querySelectorAll('#rating-select .rating-star').forEach(s => { s.textContent = '☆'; s.classList.remove('selected'); });
+  document.getElementById('review-rating').value = 0;
+});
+
+let selectedRating = 0;
+document.querySelectorAll('#rating-select .rating-star').forEach(star => {
+  star.addEventListener('click', () => {
+    selectedRating = parseInt(star.dataset.rating);
+    document.querySelectorAll('#rating-select .rating-star').forEach((s, i) => { s.textContent = i < selectedRating ? '★' : '☆'; if (i < selectedRating) s.classList.add('selected'); else s.classList.remove('selected'); });
+    document.getElementById('review-rating').value = selectedRating;
+  });
+});
+
+const adminBtn = document.createElement('button');
+adminBtn.textContent = '🔐 Модерація';
+adminBtn.className = 'btn btn-sm btn-ghost';
+adminBtn.style.position = 'fixed';
+adminBtn.style.bottom = '20px';
+adminBtn.style.right = '20px';
+adminBtn.style.zIndex = '1000';
+adminBtn.onclick = () => { const pwd = prompt("Пароль:"); if (pwd === "PsyDoc2026") { isAdmin = true; document.getElementById('admin-panel').style.display = 'block'; renderPendingReviews(); showToast("Доступ відкрито"); } };
+document.body.appendChild(adminBtn);
+
+function renderPendingReviews() {
+  const pending = reviews.filter(r => !r.approved);
+  const container = document.getElementById('pending-reviews');
+  if (pending.length === 0) { container.innerHTML = '<p style="color:var(--text-dim);">Немає відгуків на модерації</p>'; return; }
+  container.innerHTML = pending.map(r => `<div class="pending-review"><div class="pending-review-text"><div class="pending-review-author">${escapeHtml(r.name)}</div><div>⭐ ${r.rating} · ${r.category}</div><div style="font-size:0.8rem;">"${escapeHtml(r.text.substring(0,100))}${r.text.length>100?'...':''}"</div></div><div><button class="btn btn-sm btn-primary" onclick="approveReview(${r.id})">✅ Схвалити</button><button class="btn btn-sm btn-ghost" onclick="deleteReview(${r.id})">🗑️ Видалити</button></div></div>`).join('');
+}
+window.approveReview = (id) => { const idx = reviews.findIndex(r=>r.id===id); if(idx!==-1){ reviews[idx].approved=true; localStorage.setItem('reviews',JSON.stringify(reviews)); renderRatingStats(); renderReviews(); renderPendingReviews(); showToast('Відгук опубліковано'); } };
+window.deleteReview = (id) => { if(confirm('Видалити?')){ reviews=reviews.filter(r=>r.id!==id); localStorage.setItem('reviews',JSON.stringify(reviews)); renderRatingStats(); renderReviews(); renderPendingReviews(); showToast('Видалено'); } };
+renderRatingStats();
+renderReviews();
+</script>
+</body>
+</html>

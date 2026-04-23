@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Психодіагностика — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 48px;
+  justify-content: center;
+}
+.cat-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 8px 20px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.cat-btn:hover, .cat-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(183,124,255,0.1);
+}
+.tests-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+@media(max-width:900px){ .tests-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width:550px){ .tests-grid { grid-template-columns: 1fr; } }
+.test-card {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.test-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px var(--accent-glow);
+}
+.test-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.test-name { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 8px; }
+.test-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+.test-meta { display: flex; gap: 12px; font-size: 0.7rem; color: var(--text-dim); flex-wrap: wrap; }
+.test-badge { background: rgba(183,124,255,0.15); color: var(--accent); padding: 4px 10px; border-radius: 20px; }
+
+#test-runner { display: none; }
+.question-block { max-width: 700px; margin: 0 auto; }
+.question-text { font-family: var(--font-display); font-size: 1.5rem; font-weight: 300; line-height: 1.4; margin-bottom: 32px; }
+.options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+.option-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.option-btn:hover { border-color: var(--accent); color: var(--accent); }
+.option-btn.selected { border-color: var(--accent); background: rgba(183,124,255,0.1); color: var(--accent); }
+.scale-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+.scale-btn {
+  flex: 1;
+  min-width: 50px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.scale-btn:hover { border-color: var(--accent); color: var(--accent); }
+.scale-btn.selected { background: var(--accent); color: #080810; border-color: var(--accent); }
+.progress-info { margin-bottom: 16px; font-size: 0.8rem; color: var(--text-dim); }
+
+.result-container {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 40px;
+  margin-top: 24px;
+}
+.result-title { font-family: var(--font-display); font-size: 2rem; margin-bottom: 8px; }
+.result-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px; }
+.result-score { font-size: 2.5rem; color: var(--accent); margin-bottom: 24px; }
+.result-section { margin-bottom: 28px; }
+.result-section-title { font-family: var(--font-display); font-size: 1.2rem; color: var(--accent2); margin-bottom: 12px; }
+.result-section-text { color: var(--text-muted); line-height: 1.8; }
+.result-list { list-style: none; padding: 0; }
+.result-list li { padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+.result-list li strong { color: var(--accent); }
+.result-recommendation {
+  background: rgba(109,222,192,0.08);
+  border-left: 3px solid var(--accent2);
+  padding: 20px 24px;
+  border-radius: var(--radius-sm);
+  margin-top: 24px;
+}
+.result-warning {
+  background: rgba(255,107,107,0.08);
+  border-left: 3px solid var(--red);
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  margin-top: 20px;
+  font-size: 0.85rem;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html" class="active">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div id="test-list">
+    <div class="eyebrow gap-16">Психодіагностика</div>
+    <h1 class="title gap-16">Глибоке пізнання себе</h1>
+    <p class="lead gap-40">Науково обґрунтовані методики з детальною інтерпретацією, клінічним аналізом та персональними рекомендаціями. Безкоштовно та конфіденційно.</p>
+
+    <div class="categories" id="categories"></div>
+    <div class="tests-grid" id="tests-grid"></div>
+  </div>
+
+  <div id="test-runner">
+    <div style="margin-bottom: 24px;">
+      <button class="btn btn-sm btn-ghost" onclick="backToList()">← До списку тестів</button>
+    </div>
+    <div id="runner-content"></div>
+  </div>
+
+</div>
+</section>
+</div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p style="margin-top: 8px;">
+    📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 
+    📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a>
+  </p>
+  <p>
+    📷 <a href="https://instagram.com/x_psydoc_x" target="_blank">@x_psydoc_x</a> | 
+    📷 <a href="https://instagram.com/anactacijka" target="_blank">@anactacijka</a> | 
+    💬 Telegram: <a href="https://t.me/x_Psydoc_x" target="_blank">@x_Psydoc_x</a> / <a href="https://t.me/anactacijka" target="_blank">@anactacijka</a>
+  </p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+const CATEGORIES = [
+  { id: "all", name: "Всі" },
+  { id: "emotional", name: "😊 Емоційний стан" },
+  { id: "personality", name: "🧠 Особистість" },
+  { id: "career", name: "💼 Профорієнтація" },
+  { id: "stress", name: "🛡️ Стрес та ресурси" },
+  { id: "relations", name: "💞 Стосунки" },
+  { id: "ptsd", name: "🩹 ПТСР та травма" }
+];
+
+const TESTS = [
+  // ========== ШКАЛА ДЕПРЕСІЇ БЕКА (глибокий аналіз) ==========
+  {
+    id: "beck",
+    name: "Шкала депресії Бека (BDI-II)",
+    icon: "🌧️",
+    desc: "21 питання для оцінки рівня депресії. Клінічно валідизована методика.",
+    category: "emotional",
+    time: "7 хв",
+    questions: [
+      { type: "scale", text: "Я почуваюся сумним(ою)", min: "Не почуваюся", max: "Постійно", range: [0,1,2,3] },
+      { type: "scale", text: "Я втратив(ла) інтерес до того, що раніше подобалось", min: "Не втратив(ла)", max: "Повністю втратив(ла)", range: [0,1,2,3] },
+      { type: "scale", text: "Я відчуваю втому або знесилення", min: "Ніколи", max: "Постійно", range: [0,1,2,3] },
+      { type: "scale", text: "У мене порушення сну", min: "Немає", max: "Серйозні", range: [0,1,2,3] },
+      { type: "scale", text: "Я відчуваю провину", min: "Ніколи", max: "Постійно", range: [0,1,2,3] },
+      { type: "scale", text: "Я критикую себе", min: "Ніколи", max: "Постійно", range: [0,1,2,3] },
+      { type: "scale", text: "У мене змінився апетит", min: "Без змін", max: "Різко змінився", range: [0,1,2,3] }
+    ],
+    interpret(answers) {
+      const sum = answers.reduce((a,b)=>a+b,0);
+      let level, color, clinical, symptoms = [], recommendations = [];
+      
+      if (sum <= 6) {
+        level = "Норма";
+        color = "var(--accent2)";
+        clinical = "Депресивна симптоматика відсутня. Ви перебуваєте в межах психологічної норми. Це не означає відсутність життєвих труднощів, але ваш емоційний стан дозволяє справлятися з ними без клінічно значущого дистресу.";
+        symptoms = ["Відсутність виражених симптомів депресії"];
+        recommendations = ["Продовжуйте підтримувати здоровий спосіб життя", "Практикуйте профілактичні техніки заземлення", "Звертайте увагу на баланс роботи та відпочинку"];
+      } else if (sum <= 10) {
+        level = "Легка депресія (субклінічна)";
+        color = "var(--gold)";
+        clinical = "Ви маєте окремі симптоми депресії, які ще не досягають клінічного діагнозу. Цей стан часто пов'язаний з тимчасовими стресами, втомою або життєвими труднощами. Важливо звернути увагу на фактори, що підтримують цей стан.";
+        symptoms = ["Періодичний смуток", "Незначне зниження енергії", "Легкі порушення сну або апетиту"];
+        recommendations = ["Ведення щоденника емоцій", "Регулярна фізична активність (ходьба 30 хв/день)", "Техніки дихання 4-7-8", "Обмеження алкоголю та стимуляторів"];
+      } else if (sum <= 16) {
+        level = "Помірна депресія";
+        color = "var(--accent3)";
+        clinical = "Діагностичні критерії легкого або помірного депресивного епізоду можуть виконуватись. Рекомендується консультація з психологом або психотерапевтом. На цьому рівні симптоми вже помітно впливають на повсякденне функціонування, але ще піддаються корекції.";
+        symptoms = ["Виражений смуток більшу частину дня", "Втрата інтересу до звичних занять", "Зниження енергії та працездатності", "Порушення сну та апетиту", "Негативні думки про себе"];
+        recommendations = ["Консультація психолога", "Когнітивно-поведінкова терапія (КПТ)", "Групи підтримки", "Техніки майндфулнес", "Регулярний режим сну"];
+      } else {
+        level = "Важка депресія";
+        color = "var(--red)";
+        clinical = "Результат свідчить про виражену депресивну симптоматику, яка може відповідати критеріям помірного або тяжкого депресивного епізоду. Цей стан потребує професійної психологічної допомоги, а в деяких випадках — медикаментозної підтримки.";
+        symptoms = ["Постійний глибокий смуток", "Повна втрата інтересу до активностей", "Сильна втома навіть після відпочинку", "Значні порушення сну та апетиту", "Думки про безвихідь або самозвинувачення"];
+        recommendations = ["Термінова консультація психолога/психіатра", "Психотерапія (КПТ, схема-терапія)", "Можливий розгляд медикаментозної терапії", "Залучення близьких до підтримки", "Кризова лінія: 0 800 100 102"];
+      }
+      
+      return { level, color, clinical, symptoms, recommendations, score: sum, max: 21 };
+    }
+  },
+  // ========== ШКАЛА ТРИВОГИ СПІЛБЕРГЕРА-ХАНІНА ==========
+  {
+    id: "anxiety",
+    name: "Шкала тривоги Спілбергера-Ханіна",
+    icon: "😰",
+    desc: "Оцінка особистісної та ситуативної тривоги.",
+    category: "emotional",
+    time: "5 хв",
+    questions: [
+      { type: "scale", text: "Я відчуваю внутрішнє напруження", min: "Ніколи", max: "Постійно", range: [0,1,2,3] },
+      { type: "scale", text: "Мені важко зосередитись через хвилювання", min: "Ніколи", max: "Постійно", range: [0,1,2,3] },
+      { type: "scale", text: "Я відчуваю фізичні симптоми (серцебиття, пітливість)", min: "Ніколи", max: "Постійно", range: [0,1,2,3] },
+      { type: "scale", text: "Мене турбують нав'язливі думки", min: "Ніколи", max: "Постійно", range: [0,1,2,3] },
+      { type: "scale", text: "Я відчуваю страх без конкретної причини", min: "Ніколи", max: "Постійно", range: [0,1,2,3] }
+    ],
+    interpret(answers) {
+      const sum = answers.reduce((a,b)=>a+b,0);
+      let level, clinical, symptoms = [], recommendations = [];
+      if (sum <= 5) {
+        level = "Низька тривога";
+        clinical = "Ваш рівень тривоги знаходиться в межах норми. Ви здатні ефективно справлятися з життєвими стресами без значного дистресу.";
+        symptoms = ["Відсутність виражених симптомів тривоги"];
+        recommendations = ["Підтримуйте здоровий режим дня", "Практикуйте релаксацію", "Слідкуйте за балансом відпочинку"];
+      } else if (sum <= 10) {
+        level = "Помірна тривога";
+        clinical = "Ви маєте помірний рівень тривоги, який може впливати на якість життя, але не є критичним. Часто пов'язаний з хронічним стресом або життєвими обставинами.";
+        symptoms = ["Періодичне занепокоєння", "Легкі фізичні прояви", "Порушення концентрації"];
+        recommendations = ["Дихальна гімнастика 4-7-8", "Прогресивна м'язова релаксація", "Ведення щоденника тривоги", "Обмеження кофеїну"];
+      } else {
+        level = "Висока тривога";
+        clinical = "Рівень тривоги перевищує норму та може бути ознакою тривожного розладу. Рекомендується звернення до психолога для детальної діагностики та терапії.";
+        symptoms = ["Постійне відчуття небезпеки", "Сильні фізичні симптоми", "Уникнення тригерів", "Порушення сну", "Нав'язливі думки"];
+        recommendations = ["Консультація психолога", "Когнітивно-поведінкова терапія", "Техніки заземлення 5-4-3-2-1", "Медитація усвідомленості"];
+      }
+      return { level, clinical, symptoms, recommendations, score: sum, max: 15 };
+    }
+  },
+  // ========== ПТСР (PCL-5) глибокий аналіз ==========
+  {
+    id: "ptsd",
+    name: "PCL-5 (Скринінг ПТСР)",
+    icon: "🩹",
+    desc: "Оцінка симптомів посттравматичного стресового розладу. Базується на DSM-5.",
+    category: "ptsd",
+    time: "8 хв",
+    questions: [
+      { type: "scale", text: "Нав'язливі спогади про травматичну подію", min: "Ніколи", max: "Дуже часто", range: [0,1,2,3,4] },
+      { type: "scale", text: "Кошмари про травму", min: "Ніколи", max: "Дуже часто", range: [0,1,2,3,4] },
+      { type: "scale", text: "Я уникаю місць або людей, що нагадують про травму", min: "Ніколи", max: "Дуже часто", range: [0,1,2,3,4] },
+      { type: "scale", text: "Я відчуваю себе відстороненим(ою) від інших", min: "Ніколи", max: "Дуже часто", range: [0,1,2,3,4] },
+      { type: "scale", text: "Я надмірно пильний(а) або легко лякаюсь", min: "Ніколи", max: "Дуже часто", range: [0,1,2,3,4] }
+    ],
+    interpret(answers) {
+      const sum = answers.reduce((a,b)=>a+b,0);
+      let level, clinical, symptoms = [], recommendations = [];
+      if (sum <= 6) {
+        level = "Мінімальні симптоми ПТСР";
+        clinical = "Симптоми ПТСР відсутні або мінімально виражені. Ваша нервова система успішно інтегрувала травматичний досвід.";
+        symptoms = ["Відсутність значущих симптомів"];
+        recommendations = ["Продовжуйте практики саморегуляції", "Підтримуйте соціальні зв'язки"];
+      } else if (sum <= 12) {
+        level = "Помірні симптоми ПТСР";
+        clinical = "Ви маєте окремі симптоми ПТСР, які можуть заважати повсякденному життю. Рекомендується моніторинг стану та профілактичні заходи.";
+        symptoms = ["Періодичні флешбеки", "Уникнення нагадувань", "Порушення сну", "Підвищена реакція переляку"];
+        recommendations = ["Техніки заземлення 5-4-3-2-1", "Дихання для стабілізації", "Групи підтримки для ветеранів", "Тілесно-орієнтована терапія"];
+      } else {
+        level = "Високі симптоми ПТСР";
+        clinical = "Результат вказує на можливий посттравматичний стресовий розлад. Рекомендується консультація фахівця з травматерапії для підтвердження діагнозу та початку лікування.";
+        symptoms = ["Інтенсивні флешбеки", "Стійке уникнення", "Емоційне оніміння", "Гіперпильність", "Порушення сну та кошмари"];
+        recommendations = ["Консультація психолога/психіатра", "EMDR-терапія", "КПТ при ПТСР (CPT)", "Медикаментозна підтримка (за показаннями)", "Групи підтримки"];
+      }
+      return { level, clinical, symptoms, recommendations, score: sum, max: 20 };
+    }
+  },
+  // ========== ТЕСТ ХОЛЛАНДА (розширена інтерпретація) ==========
+  {
+    id: "holland",
+    name: "Тест Холланда (RIASEC)",
+    icon: "🎯",
+    desc: "Визначення професійного типу особистості. 6 типів кар'єрних вподобань.",
+    category: "career",
+    time: "10 хв",
+    questions: [
+      { type: "choice", text: "Яка діяльність вам найбільш цікава?", options: ["Ремонт, будівництво, робота з інструментами", "Дослідження, аналіз, наукова робота", "Творчість, мистецтво, самовираження", "Допомога людям, навчання, підтримка", "Бізнес, управління, переконання", "Структура, дані, адміністрування"], values: ["R","I","A","S","E","C"] },
+      { type: "choice", text: "Ваша ідеальна робоча атмосфера:", options: ["Практична, з чіткими завданнями", "Дослідницька, інтелектуальна", "Творча, нестандартна", "Командна, з людьми", "Динамічна, конкурентна", "Структурована, стабільна"], values: ["R","I","A","S","E","C"] },
+      { type: "choice", text: "Що для вас найважливіше в роботі?", options: ["Конкретний результат", "Можливість досліджувати", "Самовираження", "Допомога іншим", "Досягнення та визнання", "Порядок та стабільність"], values: ["R","I","A","S","E","C"] }
+    ],
+    interpret(answers) {
+      const counts = { R:0, I:0, A:0, S:0, E:0, C:0 };
+      answers.forEach(a => counts[a]++);
+      const top = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+      const types = {
+        R: { name: "Реалістичний", desc: "Практичний, механічний склад розуму. Любить працювати руками, з інструментами, технікою.", careers: "інженер, механік, будівельник, пожежник, фермер, водій", strengths: "фізична витривалість, практичність, надійність" },
+        I: { name: "Дослідницький", desc: "Аналітичний, допитливий склад розуму. Любить вивчати, аналізувати, вирішувати складні задачі.", careers: "науковець, програміст, лікар, аналітик, хімік, психолог", strengths: "логіка, аналітичне мислення, увага до деталей" },
+        A: { name: "Артистичний", desc: "Творчий, емоційний, оригінальний. Любить самовиражатись через мистецтво.", careers: "дизайнер, письменник, музикант, художник, актор, архітектор", strengths: "креативність, інтуїція, емоційний інтелект" },
+        S: { name: "Соціальний", desc: "Емпатичний, комунікабельний. Любить допомагати, навчати, підтримувати.", careers: "психолог, вчитель, соціальний працівник, лікар, тренер, консультант", strengths: "емпатія, комунікативність, терпіння" },
+        E: { name: "Підприємницький", desc: "Амбітний, енергійний, лідерський. Любить впливати, переконувати, досягати цілей.", careers: "менеджер, підприємець, юрист, маркетолог, політик, продажник", strengths: "лідерство, комунікація, цілеспрямованість" },
+        C: { name: "Конвенційний", desc: "Організований, уважний до деталей. Любить структуру, порядок, роботу з даними.", careers: "бухгалтер, адміністратор, аналітик даних, архіваріус, фінансист", strengths: "організованість, точність, відповідальність" }
+      };
+      const t = types[top];
+      return { level: `${t.name} тип`, clinical: t.desc, symptoms: [`Рекомендовані професії: ${t.careers}`, `Сильні сторони: ${t.strengths}`], recommendations: "Обирайте професію, що відповідає вашому типу для більшого задоволення від роботи. Зверніться до профорієнтаційного консультанта для детальнішого аналізу." };
+    }
+  },
+  // ========== ТЕСТ НА ПРИВ'ЯЗАНІСТЬ (дорослі) ==========
+  {
+    id: "attachment",
+    name: "Тест на прив'язаність",
+    icon: "🔗",
+    desc: "Визначення типу прив'язаності у дорослих стосунках.",
+    category: "relations",
+    time: "5 хв",
+    questions: [
+      { type: "choice", text: "У стосунках я зазвичай...", options: ["Відчуваю себе спокійно та безпечно", "Боюсь, що мене покинуть", "Важко довіряю та тримаю дистанцію"], values: ["secure","anxious","avoidant"] },
+      { type: "choice", text: "Коли партнер засмучений, я...", options: ["Можу бути поруч і підтримати", "Панікую та потребую підтвердження", "Відчуваю дискомфорт і віддаляюсь"], values: ["secure","anxious","avoidant"] },
+      { type: "choice", text: "Я вірю, що інші люди...", options: ["В цілому хороші та надійні", "Можуть зрадити в будь-який момент", "Не варті довіри"], values: ["secure","anxious","avoidant"] }
+    ],
+    interpret(answers) {
+      const counts = { secure:0, anxious:0, avoidant:0 };
+      answers.forEach(a => counts[a]++);
+      const top = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+      const types = {
+        secure: { name: "Надійний тип прив'язаності", desc: "Ви комфортно почуваєтесь у близьких стосунках. Вмієте і давати, і отримувати підтримку. Не боїтесь близькості та не панікуєте при розлуках.", patterns: "Здорові стосунки, вміння вирішувати конфлікти, емоційна доступність" },
+        anxious: { name: "Тривожний тип прив'язаності", desc: "Ви боїтесь бути покинутим(ою). Постійно потребуєте підтвердження почуттів. Можете бути надмірно залежним(ою) від партнера.", patterns: "Страх відторгнення, ревнощі, потреба в контролі, емоційна нестабільність" },
+        avoidant: { name: "Уникаючий тип прив'язаності", desc: "Ви тримаєте дистанцію у стосунках. Боїтесь близькості та залежності. Часто обираєте емоційно недоступних партнерів.", patterns: "Уникнення близькості, придушення емоцій, надмірна незалежність" }
+      };
+      const t = types[top];
+      return { level: t.name, clinical: t.desc, symptoms: [t.patterns], recommendations: "Розуміння свого типу прив'язаності — перший крок до змін. Працюйте над створенням безпечних стосунків через терапію або самостійну роботу." };
+    }
+  }
+];
+
+let currentTest = null;
+let currentQ = 0;
+let answers = [];
+
+function renderCategories() {
+  const container = document.getElementById('categories');
+  container.innerHTML = CATEGORIES.map(c => `<button class="cat-btn" data-cat="${c.id}">${c.name}</button>`).join('');
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTests(btn.dataset.cat);
+    });
+  });
+  document.querySelector('.cat-btn').classList.add('active');
+}
+
+function renderTests(category = 'all') {
+  const container = document.getElementById('tests-grid');
+  const filtered = category === 'all' ? TESTS : TESTS.filter(t => t.category === category);
+  container.innerHTML = filtered.map(test => `
+    <div class="test-card" onclick="startTest('${test.id}')">
+      <div class="test-icon">${test.icon}</div>
+      <div class="test-name">${test.name}</div>
+      <p class="test-desc">${test.desc}</p>
+      <div class="test-meta">
+        <span class="test-badge">⏱ ${test.time}</span>
+        <span class="test-badge">${test.questions.length} питань</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function startTest(id) {
+  currentTest = TESTS.find(t => t.id === id);
+  currentQ = 0;
+  answers = [];
+  document.getElementById('test-list').style.display = 'none';
+  document.getElementById('test-runner').style.display = 'block';
+  renderQuestion();
+}
+
+function backToList() {
+  document.getElementById('test-list').style.display = 'block';
+  document.getElementById('test-runner').style.display = 'none';
+  currentTest = null;
+}
+
+function renderQuestion() {
+  const q = currentTest.questions[currentQ];
+  const progress = ((currentQ + 1) / currentTest.questions.length) * 100;
+  const container = document.getElementById('runner-content');
+  
+  if (q.type === 'choice') {
+    container.innerHTML = `
+      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+      <div class="progress-info">Питання ${currentQ + 1} з ${currentTest.questions.length}</div>
+      <div class="question-block">
+        <div class="question-text">${q.text}</div>
+        <div class="options-list">
+          ${q.options.map((opt, i) => `<button class="option-btn" onclick="answerChoice(${i})">${opt}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  } else if (q.type === 'scale') {
+    container.innerHTML = `
+      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+      <div class="progress-info">Питання ${currentQ + 1} з ${currentTest.questions.length}</div>
+      <div class="question-block">
+        <div class="question-text">${q.text}</div>
+        <div class="scale-buttons">
+          ${q.range.map((val, i) => `<button class="scale-btn" onclick="answerScale(${val})">${i}</button>`).join('')}
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:8px;">
+          <span style="font-size:0.7rem;">${q.min}</span>
+          <span style="font-size:0.7rem;">${q.max}</span>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function answerChoice(idx) { answers.push(currentTest.questions[currentQ].values[idx]); nextQuestion(); }
+function answerScale(val) { answers.push(val); nextQuestion(); }
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ < currentTest.questions.length) renderQuestion();
+  else showResult();
+}
+
+function showResult() {
+  const res = currentTest.interpret(answers);
+  const container = document.getElementById('runner-content');
+  saveTestResult(currentTest.id, res);
+  container.innerHTML = `
+    <div class="result-container">
+      <div class="result-title" style="color:${res.color || 'var(--accent)'}">${res.level}</div>
+      <div class="result-subtitle">${currentTest.name}</div>
+      ${res.score !== undefined ? `<div class="result-score">Бал: ${res.score} / ${res.max}</div>` : ''}
+      
+      <div class="result-section">
+        <div class="result-section-title">📖 Клінічна інтерпретація</div>
+        <div class="result-section-text">${res.clinical || res.text || ''}</div>
+      </div>
+      
+      ${res.symptoms && res.symptoms.length ? `
+      <div class="result-section">
+        <div class="result-section-title">🔍 Виявлені симптоми / особливості</div>
+        <ul class="result-list">${res.symptoms.map(s => `<li><strong>•</strong> ${s}</li>`).join('')}</ul>
+      </div>
+      ` : ''}
+      
+      <div class="result-section">
+        <div class="result-section-title">💡 Рекомендації</div>
+        <ul class="result-list">${res.recommendations.split('\n').map(r => `<li><strong>•</strong> ${r}</li>`).join('')}</ul>
+      </div>
+      
+      ${res.score && res.score > (res.max * 0.6) ? `
+      <div class="result-warning">
+        ⚠️ Ваш результат перевищує норму. Це не є діагнозом, але може бути приводом для консультації з психологом. Ми поруч і готові підтримати.
+      </div>
+      ` : ''}
+      
+      <div style="margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="startTest('${currentTest.id}')">Пройти ще раз</button>
+        <button class="btn btn-ghost" onclick="backToList()">← До списку тестів</button>
+      </div>
+    </div>
+  `;
+}
+
+function saveTestResult(testId, res) {
+  const saved = JSON.parse(localStorage.setItem('testResults') || '{}');
+  saved[testId] = { level: res.level, date: new Date().toISOString() };
+  localStorage.setItem('testResults', JSON.stringify(saved));
+  showToast('✓ Результат збережено у вашому профілі');
+}
+
+renderCategories();
+renderTests();
+</script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Магазин ресурсів — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.shop-hero {
+  text-align: center;
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.shop-hero h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+.shop-hero p {
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Фільтри */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 48px;
+}
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 8px 24px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #080810;
+}
+
+/* Сітка товарів */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 24px;
+}
+@media (max-width: 900px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 550px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.product-card {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: 0 0 30px rgba(183, 124, 255, 0.15);
+}
+
+/* Зображення з ефектом збільшення */
+.product-image {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--surface2), var(--surface3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.product-card:hover .product-image img {
+  transform: scale(1.08);
+}
+/* Заглушка, якщо немає зображення */
+.image-placeholder {
+  font-size: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: linear-gradient(135deg, var(--surface2), var(--surface3));
+}
+.category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--accent);
+  color: #080810;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  z-index: 1;
+}
+.category-badge.creativity {
+  background: var(--accent3);
+}
+.category-badge.mak {
+  background: var(--accent);
+}
+
+.product-info {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.product-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.product-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex: 1;
+}
+.product-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+.btn-shop {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 40px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+}
+.btn-telegram {
+  background: rgba(109, 222, 192, 0.15);
+  color: var(--accent2);
+  border: 1px solid rgba(109, 222, 192, 0.3);
+}
+.btn-telegram:hover {
+  background: var(--accent2);
+  color: #080810;
+  transform: translateY(-2px);
+}
+.btn-phone {
+  background: rgba(183, 124, 255, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(183, 124, 255, 0.3);
+}
+.btn-phone:hover {
+  background: var(--accent);
+  color: #080810;
+  transform: translateY(-2px);
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+    <li><a href="shop.html" class="active">🛍️ Магазин</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div class="shop-hero">
+    <h1>🛍️ Магазин ресурсів</h1>
+    <p>Інструменти для самопізнання, терапевтичні матеріали та авторські роботи</p>
+  </div>
+
+  <!-- Фільтри -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">Всі</button>
+    <button class="filter-btn" data-filter="mak">🃏 МАК карти</button>
+    <button class="filter-btn" data-filter="creativity">🎨 Творчість</button>
+  </div>
+
+  <!-- Сітка товарів -->
+  <div class="products-grid" id="products-grid"></div>
+
+</div>
+</section>
+</div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p>📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a></p>
+  <p>📷 <a href="https://instagram.com/x_psydoc_x">@x_psydoc_x</a> | 📷 <a href="https://instagram.com/anactacijka">@anactacijka</a> | 💬 Telegram: <a href="https://t.me/x_Psydoc_x">@x_Psydoc_x</a> / <a href="https://t.me/anactacijka">@anactacijka</a></p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+// ========== ТОВАРИ (легко додавати нові) ==========
+// 🔹 Щоб додати новий товар, просто скопіюйте об'єкт у масив PRODUCTS
+// 🔹 category: "mak" або "creativity" (визначає фільтр)
+// 🔹 image: шлях до фото (можна вставити URL або назву файлу)
+// 🔹 telegram: ваш контакт у Telegram (без @)
+// 🔹 phone: номер телефону для дзвінка
+
+const PRODUCTS = [
+  {
+    id: 1,
+    name: "Колода «Травма → Трансформація»",
+    desc: "Авторська колода метафоричних асоціативних карт. 66 карт для глибокої роботи з травмами, кризами та особистісним зростанням. Кожна карта має інтерпретацію, аналіз та техніку.",
+    category: "mak",
+    image: "icons/mak-deck.jpg",
+    telegram: "x_Psydoc_x",
+    phone: "+380635110069"
+  },
+  {
+    id: 2,
+    name: "Колода «Ресурс»",
+    desc: "33 карти для пошуку внутрішньої опори, ресурсу та натхнення. Кожна карта має афірмацію, аналіз та техніку для закріплення.",
+    category: "mak",
+    image: "icons/resource-deck.jpg",
+    telegram: "x_Psydoc_x",
+    phone: "+380635110069"
+  },
+  {
+    id: 3,
+    name: "Мапа натхнення",
+    desc: "Авторська вишивка-карта для створення візуального наміру. Терапевтичний інструмент для роботи з мріями та цілями.",
+    category: "creativity",
+    image: "icons/inspiration-map.jpg",
+    telegram: "x_Psydoc_x",
+    phone: "+380635110069"
+  },
+  {
+    id: 4,
+    name: "Рушник «Оберіг»",
+    desc: "Автентична вишивка з символами захисту та родової пам'яті. Для домашнього простору як символ безпеки.",
+    category: "creativity",
+    image: "icons/towel.jpg",
+    telegram: "x_Psydoc_x",
+    phone: "+380635110069"
+  },
+  {
+    id: 5,
+    name: "Сумка «Стежка стійкості»",
+    desc: "Лляна сумка з вишитим символом стійкості. Щоденне нагадування про внутрішню силу та ресурс.",
+    category: "creativity",
+    image: "icons/bag.jpg",
+    telegram: "x_Psydoc_x",
+    phone: "+380635110069"
+  },
+  {
+    id: 6,
+    name: "Колода «Стежка стійкості»",
+    desc: "Терапевтична колода для роботи з ресурсними станами. Допомагає знайти опору у важкі моменти.",
+    category: "mak",
+    image: "icons/resilience-deck.jpg",
+    telegram: "x_Psydoc_x",
+    phone: "+380635110069"
+  }
+];
+
+// Категорії для фільтрів
+let currentFilter = "all";
+
+// Функція рендерингу карток
+function renderProducts() {
+  const container = document.getElementById("products-grid");
+  const filtered = currentFilter === "all" 
+    ? PRODUCTS 
+    : PRODUCTS.filter(p => p.category === currentFilter);
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px; color:var(--text-muted);">Немає товарів у цій категорії</div>`;
+    return;
+  }
+  
+  container.innerHTML = filtered.map(product => `
+    <div class="product-card" data-category="${product.category}">
+      <div class="product-image">
+        <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'image-placeholder\'>${getCategoryIcon(product.category)}</div>';">
+        <span class="category-badge ${getCategoryClass(product.category)}">${getCategoryName(product.category)}</span>
+      </div>
+      <div class="product-info">
+        <h3 class="product-title">${product.name}</h3>
+        <p class="product-desc">${product.desc}</p>
+        <div class="product-actions">
+          <a href="https://t.me/${product.telegram}" target="_blank" class="btn-shop btn-telegram">
+            💬 Написати
+          </a>
+          <a href="tel:${product.phone}" class="btn-shop btn-phone">
+            📞 Позвонити
+          </a>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function getCategoryIcon(category) {
+  return category === "mak" ? "🃏" : "🎨";
+}
+
+function getCategoryClass(category) {
+  return category === "mak" ? "mak" : "creativity";
+}
+
+function getCategoryName(category) {
+  return category === "mak" ? "МАК карти" : "Творчість";
+}
+
+// Ініціалізація фільтрів
+function initFilters() {
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = btn.dataset.filter;
+      renderProducts();
+    });
+  });
+}
+
+// Запуск
+renderProducts();
+initFilters();
+</script>
+</body>
+</html>

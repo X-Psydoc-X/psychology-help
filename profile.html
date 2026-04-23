@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Особистий кабінет — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+/* Стилі для профілю */
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Вкладки */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s;
+  border-bottom: 2px solid transparent;
+}
+.tab-btn:hover {
+  color: var(--accent);
+}
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.tab-content.active {
+  display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Картка користувача */
+.user-card {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+.user-info {
+  flex: 1;
+}
+.user-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+.user-email {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.user-stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.stat {
+  text-align: center;
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+/* Форма входу/реєстрації */
+.auth-form {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+.auth-form h3 {
+  font-family: var(--font-display);
+  margin-bottom: 24px;
+}
+.auth-form input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.auth-form button {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.auth-switch {
+  color: var(--accent2);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+/* Історія тестів */
+.tests-history {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.test-item {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.test-name {
+  font-weight: 500;
+}
+.test-result {
+  color: var(--accent2);
+}
+.test-date {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+/* Щоденник емоцій */
+.emotion-calendar {
+  margin-bottom: 24px;
+}
+.emotion-chart {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.emotion-bars {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 150px;
+  margin-top: 20px;
+}
+.emotion-bar {
+  width: 40px;
+  background: linear-gradient(to top, var(--accent), var(--accent2));
+  border-radius: 4px;
+  transition: height 0.5s ease;
+}
+.emotion-label {
+  font-size: 0.7rem;
+  margin-top: 8px;
+  text-align: center;
+}
+.emotion-entry {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.add-emotion {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.add-emotion select, .add-emotion input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  color: var(--text);
+}
+
+/* Збережені МАК-карти */
+.saved-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media(max-width:700px){ .saved-cards { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width:450px){ .saved-cards { grid-template-columns: 1fr; } }
+.saved-card {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.saved-card:hover {
+  border-color: var(--accent);
+}
+.saved-card-emoji { font-size: 2.5rem; }
+.saved-card-word { font-family: var(--font-display); font-size: 1rem; margin: 8px 0; }
+.saved-card-date { font-size: 0.6rem; color: var(--text-dim); }
+.delete-card {
+  background: none;
+  border: none;
+  color: var(--red);
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 0.7rem;
+}
+
+/* Прогрес тренувань */
+.training-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.training-card {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  text-align: center;
+}
+.training-name { font-weight: 500; margin-bottom: 8px; }
+.training-best { font-size: 0.8rem; color: var(--accent2); }
+
+/* Експорт */
+.export-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+    <li><a href="profile.html" class="active">👤 Профіль</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div class="profile-container">
+    <div class="eyebrow gap-16">Особистий кабінет</div>
+    <h1 class="title gap-16">Мій профіль</h1>
+
+    <!-- СТАН: НЕ ЗАЛОГІНЕНИЙ -->
+    <div id="auth-section">
+      <div class="auth-form" id="login-form">
+        <h3>🔐 Вхід</h3>
+        <input type="email" id="login-email" placeholder="Email">
+        <input type="password" id="login-password" placeholder="Пароль">
+        <button class="btn btn-primary" onclick="login()">Увійти</button>
+        <p class="auth-switch" onclick="showRegister()">Немає акаунта? Зареєструватись</p>
+      </div>
+      <div class="auth-form" id="register-form" style="display:none;">
+        <h3>📝 Реєстрація</h3>
+        <input type="text" id="reg-name" placeholder="Ваше ім'я">
+        <input type="email" id="reg-email" placeholder="Email">
+        <input type="password" id="reg-password" placeholder="Пароль">
+        <button class="btn btn-primary" onclick="register()">Зареєструватись</button>
+        <p class="auth-switch" onclick="showLogin()">Вже є акаунт? Увійти</p>
+      </div>
+    </div>
+
+    <!-- СТАН: ЗАЛОГІНЕНИЙ -->
+    <div id="profile-section" style="display:none;">
+      <!-- Картка користувача -->
+      <div class="user-card">
+        <div class="user-avatar" id="user-avatar">👤</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name"></div>
+          <div class="user-email" id="user-email-display"></div>
+        </div>
+        <div class="user-stats">
+          <div class="stat"><div class="stat-value" id="stat-tests">0</div><div class="stat-label">тестів</div></div>
+          <div class="stat"><div class="stat-value" id="stat-mak">0</div><div class="stat-label">МАК-карт</div></div>
+          <div class="stat"><div class="stat-value" id="stat-trainings">0</div><div class="stat-label">тренувань</div></div>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="logout()">🚪 Вийти</button>
+      </div>
+
+      <!-- Вкладки -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="tests">📊 Історія тестів</button>
+        <button class="tab-btn" data-tab="emotions">😊 Щоденник емоцій</button>
+        <button class="tab-btn" data-tab="saved">🃏 Збережені МАК</button>
+        <button class="tab-btn" data-tab="training">🏆 Прогрес тренувань</button>
+        <button class="tab-btn" data-tab="export">📥 Експорт</button>
+      </div>
+
+      <!-- Вкладка: Історія тестів -->
+      <div class="tab-content active" id="tab-tests">
+        <div id="tests-history" class="tests-history"></div>
+      </div>
+
+      <!-- Вкладка: Щоденник емоцій -->
+      <div class="tab-content" id="tab-emotions">
+        <div class="emotion-calendar">
+          <div class="emotion-chart">
+            <h4>📈 Динаміка емоційного стану</h4>
+            <div class="emotion-bars" id="emotion-bars"></div>
+          </div>
+          <div id="emotions-list" class="emotions-list"></div>
+          <div class="add-emotion">
+            <select id="emotion-select">
+              <option value="😊 Радість">😊 Радість</option>
+              <option value="😐 Спокій">😐 Спокій</option>
+              <option value="😢 Сум">😢 Сум</option>
+              <option value="😠 Гнів">😠 Гнів</option>
+              <option value="😨 Страх">😨 Страх</option>
+              <option value="😞 Втома">😞 Втома</option>
+            </select>
+            <input type="number" id="emotion-value" placeholder="Оцінка 1-10" min="1" max="10" style="width:100px;">
+            <button class="btn btn-sm btn-primary" onclick="addEmotion()">➕ Додати запис</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка: Збережені МАК-карти -->
+      <div class="tab-content" id="tab-saved">
+        <div id="saved-cards" class="saved-cards"></div>
+      </div>
+
+      <!-- Вкладка: Прогрес тренувань -->
+      <div class="tab-content" id="tab-training">
+        <div id="training-stats" class="training-stats"></div>
+      </div>
+
+      <!-- Вкладка: Експорт -->
+      <div class="tab-content" id="tab-export">
+        <div class="export-buttons">
+          <button class="btn btn-primary" onclick="exportToJSON()">📥 Експорт JSON</button>
+          <button class="btn btn-ghost" onclick="exportToPDF()">📄 Експорт PDF</button>
+          <button class="btn btn-ghost" onclick="clearAllData()" style="color:var(--red);">🗑️ Очистити всі дані</button>
+        </div>
+        <p style="margin-top: 20px; color: var(--text-muted); font-size: 0.8rem;">Експортуйте ваші результати тестів, щоденник емоцій та збережені МАК-карти.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+</div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p>📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a></p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+// ========== КЕРУВАННЯ КОРИСТУВАЧАМИ ==========
+let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+let users = JSON.parse(localStorage.getItem('users') || '[]');
+
+// Ініціалізація
+function initProfile() {
+  if (currentUser) {
+    document.getElementById('auth-section').style.display = 'none';
+    document.getElementById('profile-section').style.display = 'block';
+    document.getElementById('user-name').textContent = currentUser.name;
+    document.getElementById('user-email-display').textContent = currentUser.email;
+    updateStats();
+    renderTestsHistory();
+    renderEmotions();
+    renderSavedCards();
+    renderTrainingStats();
+    renderEmotionChart();
+  } else {
+    document.getElementById('auth-section').style.display = 'block';
+    document.getElementById('profile-section').style.display = 'none';
+  }
+}
+
+function saveUsers() { localStorage.setItem('users', JSON.stringify(users)); }
+function saveCurrentUser() { localStorage.setItem('currentUser', JSON.stringify(currentUser)); }
+
+function register() {
+  const name = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+  if (!name || !email || !password) { showToast('Заповніть всі поля'); return; }
+  if (users.find(u => u.email === email)) { showToast('Email вже зареєстрований'); return; }
+  const newUser = { id: Date.now(), name, email, password, testResults: {}, emotions: [], savedCards: [], trainingResults: {}, createdAt: new Date().toISOString() };
+  users.push(newUser);
+  saveUsers();
+  currentUser = newUser;
+  saveCurrentUser();
+  showToast('✓ Реєстрація успішна!');
+  initProfile();
+}
+
+function login() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  const user = users.find(u => u.email === email && u.password === password);
+  if (!user) { showToast('Невірний email або пароль'); return; }
+  currentUser = user;
+  saveCurrentUser();
+  showToast('✓ Вхід виконано!');
+  initProfile();
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('currentUser');
+  showToast('✓ Ви вийшли з акаунта');
+  initProfile();
+}
+
+function showRegister() {
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('register-form').style.display = 'block';
+}
+function showLogin() {
+  document.getElementById('register-form').style.display = 'none';
+  document.getElementById('login-form').style.display = 'block';
+}
+
+// ========== СТАТИСТИКА ==========
+function updateStats() {
+  const testsCount = Object.keys(currentUser.testResults || {}).length;
+  const makCount = (currentUser.savedCards || []).length;
+  const trainingsCount = Object.keys(currentUser.trainingResults || {}).length;
+  document.getElementById('stat-tests').textContent = testsCount;
+  document.getElementById('stat-mak').textContent = makCount;
+  document.getElementById('stat-trainings').textContent = trainingsCount;
+}
+
+// ========== ІСТОРІЯ ТЕСТІВ ==========
+function renderTestsHistory() {
+  const container = document.getElementById('tests-history');
+  const results = currentUser.testResults || {};
+  if (Object.keys(results).length === 0) {
+    container.innerHTML = '<p style="color:var(--text-dim);">Ще немає пройдених тестів</p>';
+    return;
+  }
+  container.innerHTML = Object.entries(results).map(([id, data]) => `
+    <div class="test-item">
+      <div><div class="test-name">${getTestName(id)}</div><div class="test-date">${new Date(data.date).toLocaleDateString('uk-UA')}</div></div>
+      <div class="test-result">${data.result || '✓ Пройдено'}</div>
+    </div>
+  `).join('');
+}
+
+function getTestName(id) {
+  const names = { beck: 'Шкала Бека', mbti: 'Тип особистості MBTI', anxiety: 'Шкала тривоги', ptsd: 'PCL-5 (ПТСР)', holland: 'Тест Холланда', attachment: 'Тест на прив\'язаність', burnout: 'Вигорання (MBI)', raven: 'Матриці Равена' };
+  return names[id] || id;
+}
+
+// ========== ЩОДЕННИК ЕМОЦІЙ ==========
+function renderEmotions() {
+  const container = document.getElementById('emotions-list');
+  const emotions = currentUser.emotions || [];
+  if (emotions.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-dim);">Ще немає записів. Додайте свій настрій сьогодні!</p>';
+    return;
+  }
+  container.innerHTML = emotions.slice().reverse().map(e => `
+    <div class="emotion-entry">
+      <span><strong>${e.emotion}</strong> — ${e.value}/10</span>
+      <span class="test-date">${new Date(e.date).toLocaleString('uk-UA')}</span>
+    </div>
+  `).join('');
+}
+
+function renderEmotionChart() {
+  const emotions = currentUser.emotions || [];
+  if (emotions.length === 0) return;
+  const last7 = emotions.slice(-7);
+  const container = document.getElementById('emotion-bars');
+  container.innerHTML = last7.map(e => `
+    <div style="text-align:center;">
+      <div class="emotion-bar" style="height: ${e.value * 12}px;"></div>
+      <div class="emotion-label">${e.value}</div>
+    </div>
+  `).join('');
+}
+
+function addEmotion() {
+  const emotion = document.getElementById('emotion-select').value;
+  const value = parseInt(document.getElementById('emotion-value').value);
+  if (!value || value < 1 || value > 10) { showToast('Введіть оцінку від 1 до 10'); return; }
+  const newEmotion = { emotion, value, date: new Date().toISOString() };
+  currentUser.emotions = currentUser.emotions || [];
+  currentUser.emotions.push(newEmotion);
+  saveCurrentUser();
+  const userIndex = users.findIndex(u => u.id === currentUser.id);
+  if (userIndex !== -1) users[userIndex] = currentUser;
+  saveUsers();
+  renderEmotions();
+  renderEmotionChart();
+  document.getElementById('emotion-value').value = '';
+  showToast('✓ Запис додано');
+}
+
+// ========== ЗБЕРЕЖЕНІ МАК-КАРТИ ==========
+function renderSavedCards() {
+  const container = document.getElementById('saved-cards');
+  const cards = currentUser.savedCards || [];
+  if (cards.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-dim);">Немає збережених карт. Додавайте карти в розділі МАК-карти!</p>';
+    return;
+  }
+  container.innerHTML = cards.map((card, idx) => `
+    <div class="saved-card">
+      <div class="saved-card-emoji">${card.emoji}</div>
+      <div class="saved-card-word">${card.word}</div>
+      <div class="saved-card-date">${new Date(card.date).toLocaleDateString('uk-UA')}</div>
+      <button class="delete-card" onclick="deleteSavedCard(${idx})">🗑️ Видалити</button>
+    </div>
+  `).join('');
+}
+
+function deleteSavedCard(idx) {
+  currentUser.savedCards.splice(idx, 1);
+  saveCurrentUser();
+  const userIndex = users.findIndex(u => u.id === currentUser.id);
+  if (userIndex !== -1) users[userIndex] = currentUser;
+  saveUsers();
+  renderSavedCards();
+  updateStats();
+  showToast('Карту видалено');
+}
+
+// ========== ПРОГРЕС ТРЕНУВАНЬ ==========
+function renderTrainingStats() {
+  const container = document.getElementById('training-stats');
+  const trainings = currentUser.trainingResults || {};
+  if (Object.keys(trainings).length === 0) {
+    container.innerHTML = '<p style="color:var(--text-dim);">Ще немає результатів тренувань</p>';
+    return;
+  }
+  container.innerHTML = Object.entries(trainings).map(([name, data]) => `
+    <div class="training-card">
+      <div class="training-name">${name}</div>
+      <div class="training-best">🏆 Найкращий: ${data.best || '-'}</div>
+      <div class="training-best">📅 ${new Date(data.lastDate).toLocaleDateString('uk-UA')}</div>
+    </div>
+  `).join('');
+}
+
+// ========== ЕКСПОРТ ==========
+function exportToJSON() {
+  const exportData = {
+    user: { name: currentUser.name, email: currentUser.email, registeredAt: currentUser.createdAt },
+    testResults: currentUser.testResults || {},
+    emotions: currentUser.emotions || [],
+    savedCards: currentUser.savedCards || [],
+    trainingResults: currentUser.trainingResults || {},
+    exportDate: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `psydoc_export_${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Експорт JSON готовий');
+}
+
+function exportToPDF() {
+  showToast('PDF експорт буде доступний найближчим часом');
+}
+
+function clearAllData() {
+  if (confirm('⚠️ Всі ваші дані будуть видалені без можливості відновлення. Продовжити?')) {
+    currentUser.testResults = {};
+    currentUser.emotions = [];
+    currentUser.savedCards = [];
+    currentUser.trainingResults = {};
+    saveCurrentUser();
+    const userIndex = users.findIndex(u => u.id === currentUser.id);
+    if (userIndex !== -1) users[userIndex] = currentUser;
+    saveUsers();
+    updateStats();
+    renderTestsHistory();
+    renderEmotions();
+    renderSavedCards();
+    renderTrainingStats();
+    renderEmotionChart();
+    showToast('Всі дані очищено');
+  }
+}
+
+// ========== ВКЛАДКИ ==========
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
+// Збереження результатів тестів (для diagnostics.html)
+window.saveTestResult = function(testId, result) {
+  if (!currentUser) { showToast('Увійдіть у профіль для збереження результатів'); return false; }
+  currentUser.testResults = currentUser.testResults || {};
+  currentUser.testResults[testId] = { result, date: new Date().toISOString() };
+  saveCurrentUser();
+  const userIndex = users.findIndex(u => u.id === currentUser.id);
+  if (userIndex !== -1) users[userIndex] = currentUser;
+  saveUsers();
+  updateStats();
+  renderTestsHistory();
+  return true;
+};
+
+// Збереження МАК-карти
+window.saveMakCard = function(emoji, word) {
+  if (!currentUser) { showToast('Увійдіть у профіль для збереження карт'); return false; }
+  currentUser.savedCards = currentUser.savedCards || [];
+  currentUser.savedCards.unshift({ emoji, word, date: new Date().toISOString() });
+  if (currentUser.savedCards.length > 50) currentUser.savedCards = currentUser.savedCards.slice(0, 50);
+  saveCurrentUser();
+  const userIndex = users.findIndex(u => u.id === currentUser.id);
+  if (userIndex !== -1) users[userIndex] = currentUser;
+  saveUsers();
+  updateStats();
+  renderSavedCards();
+  showToast('✓ Карту збережено в профіль');
+  return true;
+};
+
+initProfile();
+</script>
+</body>
+</html>

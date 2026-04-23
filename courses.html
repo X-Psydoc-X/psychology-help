@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Курси та групи підтримки — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin-bottom: 60px;
+}
+@media(max-width:800px){ .courses-grid { grid-template-columns: 1fr; } }
+
+.course-card {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: var(--transition);
+}
+.course-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px var(--accent-glow);
+}
+.course-card.featured {
+  border: 2px solid var(--gold);
+  position: relative;
+}
+.course-card.featured::before {
+  content: "★ АВТОРСЬКИЙ ПРОЄКТ";
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--gold);
+  color: #080810;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  z-index: 1;
+}
+.course-image {
+  height: 160px;
+  background: linear-gradient(135deg, var(--surface2), var(--surface3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  position: relative;
+}
+.course-content { padding: 28px; }
+.course-title { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; }
+.course-subtitle { color: var(--accent2); font-size: 0.85rem; margin-bottom: 16px; }
+.course-desc { color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+
+.speakers { margin-bottom: 20px; }
+.speaker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+}
+.speaker-avatar { font-size: 2rem; }
+.speaker-name { font-weight: 500; }
+.speaker-title { font-size: 0.7rem; color: var(--accent2); }
+
+.program-list { margin: 20px 0; padding-left: 20px; }
+.program-list li { color: var(--text-muted); margin-bottom: 8px; font-size: 0.85rem; }
+
+.info-block {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin: 16px 0;
+  text-align: center;
+}
+.info-icon { font-size: 1.5rem; margin-bottom: 8px; }
+.info-text { font-size: 0.85rem; color: var(--accent2); }
+
+.request-form {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  margin-top: 48px;
+}
+.form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.form-row > div { flex: 1; min-width: 200px; }
+.form-group label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--accent2);
+  margin-bottom: 6px;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  color: var(--text);
+  font-family: var(--font-body);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html" class="active">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div class="eyebrow gap-16">Навчання та підтримка</div>
+  <h1 class="title gap-16">Курси, групи та спільноти</h1>
+  <p class="lead gap-40">Психоедукаційні програми, групи підтримки та авторські проєкти</p>
+
+  <div class="courses-grid">
+    <!-- АВТОРСЬКИЙ КУРС "ВІД ФРОНТУ ДО ДОМУ" -->
+    <div class="course-card featured">
+      <div class="course-image"><span>🏡</span></div>
+      <div class="course-content">
+        <div class="course-title">Від фронту до дому</div>
+        <div class="course-subtitle">Як будувати діалог без мінних полів</div>
+        <p class="course-desc">Унікальний курс від двох психологинь — ветеранки та цивільної. Поєднання глибокої терапевтичної експертності з реальним розумінням специфіки військового досвіду «зсередини».</p>
+        
+        <div class="speakers">
+          <div class="speaker"><div class="speaker-avatar">🦋</div><div><div class="speaker-name">Катерина Тарасова</div><div class="speaker-title">Кризовий психолог, ветеранка ЗСУ, авторка МАК-карт</div></div></div>
+          <div class="speaker"><div class="speaker-avatar">🌿</div><div><div class="speaker-name">Анастасія Кульчицька</div><div class="speaker-title">Психологиня, фахівчиня з сімейної терапії</div></div></div>
+        </div>
+
+        <div class="info-block"><div class="info-icon">🕊️</div><div class="info-text">Інтенсив (одна глибока сесія) — 2 години концентрованої практики</div></div>
+        <div class="info-block"><div class="info-icon">🔄</div><div class="info-text">Навчальний цикл — 5 тематичних сесій (по 2 години)</div></div>
+
+        <div class="course-subtitle" style="margin-top:16px;">📋 Програма циклу (5 сесій по 2 години):</div>
+        <ul class="program-list">
+          <li>Тема 1: Психологія військового та цивільного — два різні світи</li>
+          <li>Тема 2: Як говорити про травму, не травмуючи</li>
+          <li>Тема 3: Конфлікти після повернення — звідки вони беруться</li>
+          <li>Тема 4: Комунікація без мінних полів — практичні техніки</li>
+          <li>Тема 5: Діти в сім'ї ветерана — як їм допомогти</li>
+          <li>Тема 6: Інтимна близькість після війни</li>
+          <li>Тема 7: Побудова нової ідентичності — хто я тепер?</li>
+          <li>Тема 8: Спільне планування майбутнього</li>
+        </ul>
+
+        <div class="info-block"><div class="info-icon">📍</div><div class="info-text">Локація: м. Рівне (офлайн) або онлайн</div></div>
+        <div class="info-block"><div class="info-icon">🎁</div><div class="info-text">Бонус: за вашою рекомендацією приходить ще один учасник — ви отримуєте знижку 10%</div></div>
+
+        <button class="btn btn-primary btn-full" onclick="openRequestForm('cycle')">📝 Записатись на цикл (5 сесій) →</button>
+        <button class="btn btn-ghost btn-full" style="margin-top:12px;" onclick="openRequestForm('intensive')">⚡ Записатись на інтенсив (2 години) →</button>
+      </div>
+    </div>
+
+    <!-- ГРУПА ПІДТРИМКИ ДЛЯ РОДИН ЗІ ЗНИКЛИМИ БЕЗВІСТИ -->
+    <div class="course-card">
+      <div class="course-image"><span>🕯️</span></div>
+      <div class="course-content">
+        <div class="course-title">Сила родини</div>
+        <div class="course-subtitle">Група підтримки для сімей, де є військові зниклі безвісти</div>
+        <p class="course-desc">Безпечний простір для тих, хто чекає, сподівається та продовжує жити. Підтримка однодумців, психологічна допомога, обмін досвідом.</p>
+        
+        <div class="speakers">
+          <div class="speaker"><div class="speaker-avatar">🦋</div><div><div class="speaker-name">Катерина Тарасова</div><div class="speaker-title">Кризовий психолог</div></div></div>
+          <div class="speaker"><div class="speaker-avatar">🌿</div><div><div class="speaker-name">Анастасія Кульчицька</div><div class="speaker-title">Сімейна психологиня</div></div></div>
+        </div>
+
+        <div class="info-block"><div class="info-icon">💬</div><div class="info-text">Формат: групові зустрічі онлайн (анонімно, безпечно)</div></div>
+        <div class="info-block"><div class="info-icon">🕯️</div><div class="info-text">Теми: робота з невизначеністю, підтримка дітей, турбота про себе</div></div>
+
+        <button class="btn btn-primary btn-full" onclick="openRequestForm('support')">🤝 Записатись до групи →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ФОРМА ЗАЯВКИ -->
+  <div class="request-form" id="request-form" style="display: none;">
+    <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 24px;" id="form-title">Заявка на участь</h3>
+    
+    <form id="main-form">
+      <div class="form-row">
+        <div class="form-group"><label>📛 Ваше ім'я</label><input type="text" id="user-name" required></div>
+        <div class="form-group"><label>📧 Email</label><input type="email" id="user-email" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>📞 Телефон (Telegram/Viber)</label><input type="tel" id="user-phone"></div>
+        <div class="form-group"><label>🎥 Формат участі</label>
+          <select id="user-format"><option value="online">Онлайн</option><option value="offline">Офлайн (Рівне)</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>💬 Що ви хотіли б отримати від участі? (за бажанням)</label>
+        <textarea id="user-message" rows="3" style="width:100%"></textarea>
+      </div>
+      
+      <div id="suggest-field" style="margin-top: 16px; display: none;">
+        <div class="form-group"><label>💡 Яка тема вам була б цікава?</label>
+          <input type="text" id="user-suggestion" placeholder="Наприклад: 'Як допомогти дитині впоратись з тривогою'">
+        </div>
+      </div>
+      
+      <div style="margin-top: 24px; display: flex; gap: 12px;">
+        <button type="button" class="btn btn-primary" onclick="submitRequest()">📩 Надіслати заявку</button>
+        <button type="button" class="btn btn-ghost" onclick="closeRequestForm()">Скасувати</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ДОДАТКОВА ІНФОРМАЦІЯ -->
+  <div style="margin-top: 48px; text-align: center; padding: 32px; background: rgba(20,20,36,0.5); border-radius: var(--radius-md);">
+    <h3 style="font-family: var(--font-display);">📢 Інші курси та вебінари — за запитом</h3>
+    <p style="color: var(--text-muted); margin-top: 16px;">Слідкуйте за анонсами в наших соцмережах або залиште заявку на тему, яка вас цікавить — ми зберемо групу.</p>
+    <button class="btn btn-ghost" onclick="openSuggestionForm()">💡 Запропонувати тему</button>
+  </div>
+
+</div>
+</section>
+</div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p>📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a></p>
+  <p>📷 <a href="https://instagram.com/x_psydoc_x">@x_psydoc_x</a> | 📷 <a href="https://instagram.com/anactacijka">@anactacijka</a> | 💬 Telegram: <a href="https://t.me/x_Psydoc_x">@x_Psydoc_x</a> / <a href="https://t.me/anactacijka">@anactacijka</a></p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+let currentRequestType = null;
+
+function openRequestForm(type) {
+  currentRequestType = type;
+  const form = document.getElementById('request-form');
+  const title = document.getElementById('form-title');
+  const suggestField = document.getElementById('suggest-field');
+  
+  if (type === 'cycle') {
+    title.innerHTML = '📝 Заявка на цикл «Від фронту до дому» (5 сесій)';
+    suggestField.style.display = 'none';
+  } else if (type === 'intensive') {
+    title.innerHTML = '⚡ Заявка на інтенсив «Від фронту до дому» (2 години)';
+    suggestField.style.display = 'none';
+  } else if (type === 'support') {
+    title.innerHTML = '🕯️ Заявка на групу підтримки «Сила родини»';
+    suggestField.style.display = 'none';
+  } else if (type === 'suggest') {
+    title.innerHTML = '💡 Запропонувати тему для курсу';
+    suggestField.style.display = 'block';
+  }
+  
+  form.style.display = 'block';
+  window.scrollTo({ top: form.offsetTop - 100, behavior: 'smooth' });
+}
+
+function openSuggestionForm() {
+  openRequestForm('suggest');
+}
+
+function closeRequestForm() {
+  document.getElementById('request-form').style.display = 'none';
+  document.getElementById('user-name').value = '';
+  document.getElementById('user-email').value = '';
+  document.getElementById('user-phone').value = '';
+  document.getElementById('user-message').value = '';
+  document.getElementById('user-suggestion').value = '';
+  currentRequestType = null;
+}
+
+function submitRequest() {
+  const name = document.getElementById('user-name').value;
+  const email = document.getElementById('user-email').value;
+  const phone = document.getElementById('user-phone').value;
+  const format = document.getElementById('user-format').value;
+  const message = document.getElementById('user-message').value;
+  const suggestion = document.getElementById('user-suggestion').value;
+  
+  if (!name || !email) {
+    showToast('Будь ласка, заповніть ім\'я та email');
+    return;
+  }
+  
+  let subject = '';
+  let body = `Ім'я: ${name}\nEmail: ${email}\nТелефон: ${phone}\nФормат: ${format}\nПовідомлення: ${message}`;
+  
+  if (currentRequestType === 'cycle') {
+    subject = 'Заявка на цикл Від фронту до дому (5 сесій)';
+  } else if (currentRequestType === 'intensive') {
+    subject = 'Заявка на інтенсив Від фронту до дому (2 години)';
+  } else if (currentRequestType === 'support') {
+    subject = 'Заявка на групу підтримки Сила родини';
+    body += `\n\nГрупа підтримки для сімей із зниклими безвісти військовими`;
+  } else {
+    subject = 'Пропозиція теми для курсу';
+    body = `Ім'я: ${name}\nEmail: ${email}\nТелефон: ${phone}\nПропозиція: ${suggestion}\nПовідомлення: ${message}`;
+  }
+  
+  window.location.href = `mailto:psyhelp.psydoc.fixer@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  
+  showToast('✓ Заявку відкрито у вашому поштовому клієнті. Надішліть її, будь ласка.');
+  
+  setTimeout(() => {
+    closeRequestForm();
+  }, 2000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Освіта — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+@media(max-width:900px){ .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width:550px){ .grid-3 { grid-template-columns: 1fr; } }
+
+.card {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px var(--accent-glow);
+}
+.card-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.card-title { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 8px; font-weight: 500; }
+.card-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+.card-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+}
+.badge-reaction { background: rgba(240,163,208,0.15); color: var(--accent3); }
+.badge-technique { background: rgba(109,222,192,0.15); color: var(--accent2); }
+.badge-article { background: rgba(183,124,255,0.15); color: var(--accent); }
+
+.section-title {
+  font-size: 1.8rem;
+  font-family: var(--font-display);
+  margin: 48px 0 8px;
+}
+.section-title:first-of-type { margin-top: 0; }
+
+.modal-content { max-width: 750px; max-height: 80vh; overflow-y: auto; }
+.modal-step {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+.modal-step h4 { color: var(--accent); margin-bottom: 8px; font-family: var(--font-display); }
+.modal-warning {
+  background: rgba(255,107,107,0.1);
+  border-left: 3px solid var(--red);
+  padding: 16px;
+  margin-top: 20px;
+  border-radius: var(--radius-sm);
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html" class="active">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div class="eyebrow gap-16">Психологічна освіта</div>
+  <h1 class="title gap-16">Знання, які рятують</h1>
+  <p class="lead gap-40">Техніки самодопомоги, розуміння своїх реакцій та практичні інструменти для відновлення</p>
+
+  <!-- РЕАКЦІЇ ВИЖИВАННЯ -->
+  <h2 class="section-title">🛡️ Реакції виживання</h2>
+  <p class="lead" style="max-width:100%; margin-bottom:16px;">Це те, що вмикається миттєво на рівні рептильного мозку. Це не слабкість — це еволюційний механізм захисту.</p>
+  <div class="grid-3" id="reactions-grid"></div>
+
+  <!-- ТЕХНІКИ САМОДОПОМОГИ -->
+  <h2 class="section-title">🛠️ Техніки самодопомоги</h2>
+  <p class="lead" style="max-width:100%; margin-bottom:16px;">Практичні інструменти для стабілізації стану, зняття тривоги та відновлення ресурсу</p>
+  <div class="grid-3" id="techniques-grid"></div>
+
+  <!-- СТАТТІ -->
+  <h2 class="section-title">📖 Статті</h2>
+  <p class="lead" style="max-width:100%; margin-bottom:16px;">Поглиблені матеріали про ПТСР, травму, тривогу, провину та депресію</p>
+  <div class="grid-3" id="articles-grid"></div>
+
+</div>
+</section>
+</div>
+
+<!-- МОДАЛЬНЕ ВІКНО -->
+<div class="overlay" id="content-modal"><div class="modal modal-content" id="modal-content"></div></div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p style="margin-top: 8px;">📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a></p>
+  <p>📷 <a href="https://instagram.com/x_psydoc_x">@x_psydoc_x</a> | 📷 <a href="https://instagram.com/anactacijka">@anactacijka</a> | 💬 Telegram: <a href="https://t.me/x_Psydoc_x">@x_Psydoc_x</a> / <a href="https://t.me/anactacijka">@anactacijka</a></p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+// ========== РЕАКЦІЇ ВИЖИВАННЯ ==========
+const REACTIONS = [
+  { id: "aggression", icon: "👊", name: "Агресія / Лють", desc: "Спалахи гніву, бажання напасти, крик, образи",
+    content: `<h2>👊 Агресія та лють</h2><div class="modal-step"><h4>📋 Як проявляється:</h4><ul><li>Спалахи гніву, крик, образи</li><li>Бажання вдарити, зруйнувати щось</li><li>Напружені м'язи, стиснуті кулаки</li></ul></div><div class="modal-step"><h4>🛠️ Що допомагає:</h4><ul><li>Фізичне навантаження (присідання, бити подушку)</li><li>Техніка «вихід гніву»: написати гнівний лист, потім спалити</li><li>Дихання 4-7-8</li><li>Вийняти з приміщення на 5-10 хвилин</li></ul></div><div class="modal-warning">⚠️ Якщо агресія спрямована на близьких або себе — зверніться до психолога.</div>`
+  },
+  { id: "hysteria", icon: "😭", name: "Істерика", desc: "Некерований плач, крик, рвучкі рухи",
+    content: `<h2>😭 Істерика</h2><div class="modal-step"><h4>📋 Як проявляється:</h4><ul><li>Гучний плач, крик, ридання</li><li>Рвучкі, неконтрольовані рухи</li><li>Відчуття «мені погано», «я не витримую»</li></ul></div><div class="modal-step"><h4>🛠️ Перша допомога:</h4><ul><li>Не залишайте людину саму</li><li>Не кажіть «заспокойся» — це погіршує стан</li><li>Дайте склянку води (допомагає переключитись)</li><li>Холодний компрес на обличчя</li><li>Запропонуйте подихати разом</li></ul></div>`
+  },
+  { id: "panic", icon: "😰", name: "Панічна атака", desc: "Раптовий сильний страх, серцебиття, відчуття смерті",
+    content: `<h2>😰 Панічна атака</h2><div class="modal-step"><h4>📋 Симптоми:</h4><ul><li>Серцебиття, біль у грудях</li><li>Задишка, відчуття задухи</li><li>Тремор, пітливість</li><li>Страх смерті або божевілля</li></ul></div><div class="modal-step"><h4>🛠️ Що допомагає:</h4><ol><li>Скажіть собі: «Це паніка. Вона мине. Я не помру»</li><li>Дихання 4-7-8</li><li>Заземлення 5-4-3-2-1</li><li>Відчуйте ногами підлогу, притисніть ступні</li><li>Холодна вода на обличчя</li></ol></div>`
+  },
+  { id: "fear", icon: "😨", name: "Страх", desc: "Наростаюче відчуття небезпеки, напруження",
+    content: `<h2>😨 Страх</h2><div class="modal-step"><h4>📋 Що допомагає:</h4><ul><li>Дихання животом (вдих 4с, видих 6с)</li><li>Заземлення через тіло: відчути вагу в стільці, ногах</li><li>Запитати себе: «Що реально загрожує мені зараз?»</li><li>Розмова з безпечною людиною</li></ul></div>`
+  },
+  { id: "stupor", icon: "🧊", name: "Ступор (Завмирання)", desc: "Заціпеніння, відсутність рухів та реакцій",
+    content: `<h2>🧊 Ступор (Реакція «Замри»)</h2><div class="modal-step"><h4>📋 Ознаки:</h4><ul><li>Завмирання в одній позі</li><li>Відсутність реакції на голос</li><li>Порожній погляд</li></ul></div><div class="modal-step"><h4>🛠️ Перша допомога:</h4><ul><li>Говорити тихо, спокійно</li><li>Взяти за руку, злегка стиснути</li><li>Запропонувати рух: «Поворухніть пальцями»</li><li>Розтирання мочок вух</li><li>Не залишати без нагляду</li></ul></div>`
+  },
+  { id: "apathy", icon: "😐", name: "Апатія", desc: "Втрата інтересу, енергії, бажання щось робити",
+    content: `<h2>😐 Апатія</h2><div class="modal-step"><h4>📋 Ознаки:</h4><ul><li>Байдужість до всього</li><li>Відсутність емоцій</li><li>Труднощі з простими діями</li></ul></div><div class="modal-step"><h4>🛠️ Що допомагає:</h4><ul><li>Маленькі кроки: «Зроби одну дію зараз»</li><li>Прогулянка на свіжому повітрі</li><li>Контрастний душ</li><li>Розмова з близьким</li><li>Якщо триває тижнями — зверніться до психолога</li></ul></div>`
+  },
+  { id: "nervous", icon: "💫", name: "Нервове збудження", desc: "Метушливість, безцільні рухи, неспокій",
+    content: `<h2>💫 Нервове збудження</h2><div class="modal-step"><h4>📋 Ознаки:</h4><ul><li>Постійні рухи (хапає речі, ходить туди-сюди)</li><li>Швидка мова, неможливість зупинитись</li><li>Відчуття «не можу знайти собі місце»</li></ul></div><div class="modal-step"><h4>🛠️ Що допомагає:</h4><ul><li>Фізичне навантаження (присідання, віджимання)</li><li>Холодна вода на обличчя та зап'ястя</li><li>Дихання з подовженим видихом</li><li>Розслаблююча музика</li></ul></div>`
+  },
+  { id: "tremor", icon: "🫨", name: "Нервове тремтіння", desc: "Неконтрольоване тремтіння тіла, рук, голосу",
+    content: `<h2>🫨 Нервове тремтіння</h2><div class="modal-step"><h4>📋 Що допомагає:</h4><ul><li>Розслабте тіло, не стримуйте тремтіння</li><li>Глибоке дихання животом</li><li>Стиснути та розтиснути кулаки 10 разів</li><li>Напружити всі м'язи тіла на 5 секунд, потім різко розслабити</li><li>Теплий напій</li></ul></div>`
+  },
+  { id: "delusions", icon: "🌫️", name: "Марення / Галюцинації", desc: "Відчуття нереальності, голоси, незвичні думки",
+    content: `<h2>🌫️ Марення та галюцинації</h2><div class="modal-warning"><strong>⚠️ ВАЖЛИВО:</strong> Цей стан потребує медичної допомоги!</div><div class="modal-step"><h4>📋 Що робити:</h4><ul><li>Не сперечайтесь про реальність побаченого/почутого</li><li>Зберігайте спокійну, безпечну атмосферу</li><li>Не залишайте людину саму</li><li>Зверніться до лікаря-психіатра або викличте швидку (103)</li></ul></div>`
+  }
+];
+
+// ========== ТЕХНІКИ САМОДОПОМОГИ ==========
+const TECHNIQUES = [
+  { id: "grounding", icon: "🌍", name: "Заземлення 5-4-3-2-1", desc: "Повернення в реальність при паніці, флешбеку, дисоціації",
+    content: `<h2>🌍 Техніка заземлення 5-4-3-2-1</h2><div class="modal-step"><h4>📋 Покроково:</h4><ol><li><strong>5</strong> — знайдіть 5 речей, які ви бачите</li><li><strong>4</strong> — знайдіть 4 речі, яких можете торкнутися</li><li><strong>3</strong> — знайдіть 3 звуки, які чуєте</li><li><strong>2</strong> — знайдіть 2 запахи, які відчуваєте</li><li><strong>1</strong> — знайдіть 1 смак у роті</li></ol><p>Робіть це повільно. Говоріть вголос. Це повертає нервову систему в «тут і зараз».</p></div>`
+  },
+  { id: "breath", icon: "🌬️", name: "Дихання 4-7-8", desc: "Зниження тривоги, заспокоєння нервової системи",
+    content: `<h2>🌬️ Дихання 4-7-8</h2><div class="modal-step"><h4>📋 Алгоритм:</h4><ol><li>Вдих через ніс — 4 секунди</li><li>Затримка дихання — 7 секунд</li><li>Видих через рот — 8 секунд</li></ol><p>Повторити 4-5 разів. Активує парасимпатичну нервову систему.</p></div>`
+  },
+  { id: "stop", icon: "🛑", name: "STOP-техніка", desc: "Переривання автоматичної реакції",
+    content: `<h2>🛑 STOP-техніка</h2><div class="modal-step"><h4>📋 Покроково:</h4><ol><li><strong>S</strong> — Stop (зупиніться, завмріть)</li><li><strong>T</strong> — Take a breath (глибоко вдихніть)</li><li><strong>O</strong> — Observe (помітьте: що відбувається в тілі? які думки?)</li><li><strong>P</strong> — Proceed (продовжуйте, але усвідомлено)</li></ol><p>Це допомагає взяти паузу, перш ніж відреагувати автоматично.</p></div>`
+  },
+  { id: "safeplace", icon: "🏠", name: "Безпечне місце", desc: "Створення внутрішньої опори",
+    content: `<h2>🏠 Техніка «Безпечне місце»</h2><div class="modal-step"><h4>📋 Алгоритм:</h4><ol><li>Заплющіть очі, зробіть кілька вдихів</li><li>Уявіть місце, де ви почуваєтесь у безпеці</li><li>Додайте деталі: що бачите? чуєте? відчуваєте? які запахи?</li><li>Знайдіть це відчуття в тілі — де воно? Яке воно?</li><li>Дайте йому слово або образ — ваш внутрішній якір</li></ol></div>`
+  },
+  { id: "flashback", icon: "⚡", name: "При флешбеку", desc: "Алгоритм дій під час флешбеку",
+    content: `<h2>⚡ Що робити при флешбеку</h2><div class="modal-step"><h4>📋 Алгоритм:</h4><ol><li>Скажіть собі: «Я в безпеці зараз. Це минуле»</li><li>Техніка орієнтації: «Де я? Яка кімната? Яке місто? Який рік?»</li><li>Заземлення 5-4-3-2-1</li><li>Дихання 4-7-8</li><li>Відчуйте ноги на підлозі, вагу тіла на стільці</li><li>Покладіть руку на серце, відчуйте тепло</li></ol></div>`
+  },
+  { id: "dissociation", icon: "🫧", name: "При дисоціації", desc: "Повернення з відчуття нереальності",
+    content: `<h2>🫧 При дисоціації</h2><div class="modal-step"><h4>📋 Алгоритм:</h4><ol><li>Назвіть своє ім'я вголос</li><li>Поставте ноги на підлогу, відчуйте опору</li><li>Візьміть щось у руки, опишіть текстуру, температуру</li><li>Подихайте разом (вдих на 4, видих на 6)</li><li>Озирніться: назвіть 3 предмети навколо</li><li>Покладіть руку на стегно, відчуйте контакт</li></ol></div>`
+  },
+  { id: "square-breath", icon: "⬛", name: "Дихання квадратом", desc: "Стабілізація нервової системи",
+    content: `<h2>⬛ Дихання квадратом</h2><div class="modal-step"><h4>📋 Алгоритм:</h4><ol><li>Вдих — 4 секунди</li><li>Затримка — 4 секунди</li><li>Видих — 4 секунди</li><li>Затримка — 4 секунди</li></ol><p>Повторіть 10 разів. Заспокоює нервову систему.</p></div>`
+  },
+  { id: "body-scan", icon: "🫀", name: "Сканування тіла", desc: "Зняття тілесної напруги",
+    content: `<h2>🫀 Сканування тіла</h2><div class="modal-step"><h4>📋 Алгоритм:</h4><ol><li>Ляжте або сядьте зручно</li><li>Проведіть увагою від пальців ніг до маківки</li><li>Де напруга? Де тепло? Де оніміння?</li><li>Не намагайтесь змінити — просто спостерігайте</li><li>Подихайте в зони напруги, уявляючи, як тепло розчиняє блокування</li></ol></div>`
+  },
+  { id: "cold-water", icon: "💧", name: "Холодна вода", desc: "Швидке переключення нервової системи",
+    content: `<h2>💧 Техніка «Холодна вода»</h2><div class="modal-step"><h4>📋 Алгоритм:</h4><ol><li>Вмийте обличчя холодною водою</li><li>Або зануріть зап'ястя у холодну воду на 30 секунд</li><li>Можна прикласти щось холодне до обличчя</li></ol><p>Це активує занурювальний рефлекс і швидко знижує рівень тривоги.</p></div>`
+  }
+];
+
+// ========== СТАТТІ ==========
+const ARTICLES = [
+  { id: "ptsd", icon: "🧠", name: "ПТСР: механізми та симптоми", desc: "Що відбувається в нервовій системі, три кластери симптомів",
+    content: `<h2>ПТСР: механізми та симптоми</h2><p>ПТСР — це не слабкість. Це нормальна реакція на ненормальні події. Травматична пам'ять зберігається без контексту «минуле».</p><div class="modal-step"><h4>📋 Три кластери симптомів ПТСР (DSM-5):</h4><ul><li><strong>Інтрузії:</strong> флешбеки, кошмари, нав'язливі спогади</li><li><strong>Уникнення:</strong> уникання місць, людей, розмов про травму</li><li><strong>Гіперзбудження:</strong> агресія, безсоння, гіперпильність</li></ul></div><div class="modal-step"><h4>📋 Фазова модель терапії ПТСР:</h4><ol><li>Безпека та стабілізація — вікно толерантності, ресурси</li><li>Опрацювання травми — EMDR, КПТ</li><li>Інтеграція — відновлення зв'язків</li></ol></div><div class="modal-warning">⚠️ ПТСР лікується. Звернення до фахівця — це крок до відновлення.</div>`
+  },
+  { id: "night-terrors", icon: "🌙", name: "Нічні жахіття", desc: "Чому виникають, техніки роботи",
+    content: `<h2>Нічні жахіття</h2><p>Нічні кошмари — часта супутниця ПТСР. Вони відображають неопрацьований травматичний досвід.</p><div class="modal-step"><h4>📋 Що допомагає:</h4><ul><li><strong>Техніка «переписування сну»:</strong> вдень змініть фінал кошмару</li><li><strong>Ритуал перед сном:</strong> свічка, теплий чай</li><li><strong>Безпечне місце:</strong> уявіть його перед сном</li><li><strong>Терапія:</strong> EMDR, КПТ</li></ul></div>`
+  },
+  { id: "panic", icon: "😰", name: "Панічні атаки", desc: "Причини, симптоми, алгоритм допомоги",
+    content: `<h2>Панічні атаки</h2><div class="modal-step"><h4>📋 Під час панічної атаки:</h4><ol><li>Скажіть собі: «Це паніка. Вона мине»</li><li>Дихання 4-7-8</li><li>Заземлення 5-4-3-2-1</li><li>Холодна вода на обличчя</li></ol></div><div class="modal-step"><h4>📋 Допомога іншому:</h4><ul><li>Говоріть спокійним голосом</li><li>Дихайте разом</li><li>Не кажіть «заспокойся»</li></ul></div>`
+  },
+  { id: "grief", icon: "💔", name: "Горе та втрата", desc: "Стадії горя, нормалізація реакцій",
+    content: `<h2>Горе та втрата</h2><div class="modal-step"><h4>📋 Стадії горя:</h4><ol><li>Заперечення</li><li>Гнів</li><li>Торг</li><li>Депресія</li><li>Прийняття</li></ol><p>Стадії можуть йти в різному порядку та повторюватись.</p></div><div class="modal-step"><h4>📋 Що допомагає:</h4><ul><li>Дозволити собі будь-які емоції</li><li>Техніки продовження зв'язку (листи, ритуали)</li><li>Групи підтримки</li></ul></div>`
+  },
+  { id: "burnout", icon: "🔥", name: "Професійне вигорання", desc: "Ознаки, стадії, профілактика",
+    content: `<h2>Вигорання</h2><div class="modal-step"><h4>📋 Ознаки:</h4><ul><li>Виснаження — хронічна втома</li><li>Цинізм — байдужість до роботи</li><li>Неефективність — «нічого не виходить»</li></ul></div><div class="modal-step"><h4>📋 Профілактика:</h4><ul><li>Відпочинок — не нагорода, а необхідність</li><li>Кордони: вміння казати «ні»</li><li>Супервізія та власна терапія</li><li>Хобі поза роботою</li></ul></div>`
+  },
+  { id: "survivor-guilt", icon: "🕯️", name: "Провина вцілілого", desc: "Коли інші загинули, а ти вижив",
+    content: `<h2>🕯️ Провина вцілілого</h2><p>«Чому вижив я, а не він? Чи міг я зробити більше?»</p><div class="modal-step"><h4>📋 Як проявляється:</h4><ul><li>«Я не мав права виживати»</li><li>Нездатність радіти життю</li><li>Нав'язливі думки про загиблих</li><li>Самопокарання</li></ul></div><div class="modal-step"><h4>🛠️ Робота з провиною:</h4><ul><li>Нормалізація: «Це природна реакція»</li><li>Розмежування: «Ви вижили поруч, а не замість»</li><li>Ритуал вшанування загиблих</li></ul></div><div class="modal-warning">💡 Дозвольте собі жити далі — це не зрада, це повага до тих, кого вже немає.</div>`
+  },
+  { id: "guilt", icon: "💔", name: "Почуття провини", desc: "Від здорової до токсичної провини",
+    content: `<h2>💔 Почуття провини</h2><div class="modal-step"><h4>📋 Види провини:</h4><ul><li><strong>Здорова:</strong> допомагає виправити помилку</li><li><strong>Токсична:</strong> бере відповідальність за не своє</li><li><strong>Екзистенційна:</strong> «я міг би бути кращим»</li></ul></div><div class="modal-step"><h4>📋 Провина vs Сором:</h4><ul><li>Провина: «Я зробив погано» (дія)</li><li>Сором: «Я поганий» (особистість)</li></ul></div><div class="modal-step"><h4>📝 Техніка «Журнал провини»:</h4><ol><li>Що я зробив?</li><li>Чи був я реально відповідальний?</li><li>Що можу зробити, щоб виправити?</li><li>Чи можу пробачити себе?</li></ol></div>`
+  }
+];
+
+function renderGrid(containerId, items, badgeClass, callback) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = items.map(item => `
+    <div class="card" onclick="${callback}('${item.id}')">
+      <div class="card-icon">${item.icon}</div>
+      <div class="card-title">${item.name}</div>
+      <p class="card-desc">${item.desc}</p>
+      <span class="card-badge ${badgeClass}">Детальніше →</span>
+    </div>
+  `).join('');
+}
+
+function openReaction(id) { openModalWithContent(REACTIONS.find(i => i.id === id)?.content || ''); }
+function openTechnique(id) { openModalWithContent(TECHNIQUES.find(i => i.id === id)?.content || ''); }
+function openArticle(id) { openModalWithContent(ARTICLES.find(i => i.id === id)?.content || ''); }
+
+function openModalWithContent(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  openModal('content-modal');
+}
+
+document.querySelectorAll('.overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+renderGrid('reactions-grid', REACTIONS, 'badge-reaction', 'openReaction');
+renderGrid('techniques-grid', TECHNIQUES, 'badge-technique', 'openTechnique');
+renderGrid('articles-grid', ARTICLES, 'badge-article', 'openArticle');
+</script>
+</body>
+</html>

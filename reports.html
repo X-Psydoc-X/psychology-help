@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аналітика та звіти — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+.report-container { max-width: 800px; margin: 0 auto; }
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin: 32px 0; }
+.stat-big { text-align: center; background: var(--surface2); padding: 32px; border-radius: var(--radius-md); }
+.stat-big-value { font-family: var(--font-display); font-size: 3rem; color: var(--accent); }
+.chart-container { background: var(--surface2); border-radius: var(--radius-md); padding: 24px; margin: 24px 0; }
+.recommendations { background: rgba(109,222,192,0.1); border-radius: var(--radius-md); padding: 24px; margin: 24px 0; border-left: 3px solid var(--accent2); }
+.recommendation-item { padding: 12px; border-bottom: 1px solid var(--border); }
+.btn-group { display: flex; gap: 16px; flex-wrap: wrap; margin: 24px 0; justify-content: center; }
+</style>
+</head>
+<body>
+<nav>...</nav>
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+  <div class="eyebrow gap-16">Аналітика</div>
+  <h1 class="title gap-16">Персональні звіти</h1>
+  <p class="lead gap-40">Аналіз вашого стану, динаміка змін та персоналізовані рекомендації</p>
+
+  <div class="report-container" id="report-content">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="chart-container"><canvas id="emotion-chart" width="400" height="200"></canvas></div>
+    <div class="recommendations" id="recommendations"></div>
+  </div>
+  <div class="btn-group"><button class="btn btn-primary" onclick="generatePDF()">📥 Завантажити звіт PDF</button><button class="btn btn-ghost" onclick="loadReport()">🔄 Оновити аналітику</button></div>
+</div>
+</section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let emotionChart = null;
+function getCurrentUser() { return JSON.parse(localStorage.getItem('currentUser')); }
+function loadReport() {
+  const user = getCurrentUser();
+  if (!user) { document.getElementById('stats-grid').innerHTML = '<p style="grid-column:1/-1; text-align:center;">Увійдіть у профіль для перегляду аналітики</p>'; return; }
+  const emotions = user.emotions || [];
+  const tests = user.testResults || {};
+  const avgEmotion = emotions.length ? Math.round(emotions.reduce((a,b)=>a+b.value,0)/emotions.length*10)/10 : 0;
+  const trend = emotions.length >=2 ? (emotions[emotions.length-1].value - emotions[0].value) > 0 ? '📈 Покращення' : '📉 Погіршення' : '—';
+  document.getElementById('stats-grid').innerHTML = `<div class="stat-big"><div class="stat-big-value">${avgEmotion}</div><div class="stat-big-label">середній емоційний стан</div></div><div class="stat-big"><div class="stat-big-value">${Object.keys(tests).length}</div><div class="stat-big-label">пройдено тестів</div></div><div class="stat-big"><div class="stat-big-value">${trend}</div><div class="stat-big-label">динаміка за останній тиждень</div></div><div class="stat-big"><div class="stat-big-value">${emotions.length}</div><div class="stat-big-label">записів у щоденнику</div></div>`;
+  if (emotionChart) emotionChart.destroy();
+  const ctx = document.getElementById('emotion-chart').getContext('2d');
+  emotionChart = new Chart(ctx, { type: 'line', data: { labels: emotions.map((_,i)=>i+1), datasets: [{ label: 'Емоційний стан (1-10)', data: emotions.map(e=>e.value), borderColor: '#a882ff', backgroundColor: 'rgba(168,130,255,0.1)', fill: true, tension: 0.3 }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#eae6f4' } } }, scales: { y: { min: 1, max: 10, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { grid: { color: 'rgba(255,255,255,0.1)' } } } } });
+  const recommendations = [];
+  if (avgEmotion < 4) recommendations.push("😔 Ваш емоційний стан нижче середнього. Рекомендуємо техніки заземлення та дихання.");
+  if (tests.ptsd && tests.ptsd.result === "Високі симптоми ПТСР") recommendations.push("🩹 За результатами PCL-5 виявлено високі симптоми ПТСР. Рекомендується консультація психолога.");
+  if (tests.beck && parseInt(tests.beck.result) > 15) recommendations.push("🌧️ Результати шкали Бека вказують на депресивну симптоматику. Психотерапія може бути ефективною.");
+  if (emotions.length > 0 && emotions[emotions.length-1].value > 7) recommendations.push("🌟 Ваш настрій покращується! Продовжуйте практикувати техніки самодопомоги.");
+  if (recommendations.length === 0) recommendations.push("✨ Ваш стан у межах норми. Продовжуйте підтримувати себе!");
+  document.getElementById('recommendations').innerHTML = `<h3>🤖 AI-рекомендації</h3>${recommendations.map(r=>`<div class="recommendation-item">${r}</div>`).join('')}`;
+}
+function generatePDF() { const element = document.getElementById('report-content'); html2pdf().from(element).set({ margin: 1, filename: `psydoc_report_${Date.now()}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).save(); showToast('PDF звіт створюється...'); }
+loadReport();
+</script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PsyDoc — Психологічна допомога ветеранам та родинам</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+/* Додаткові стилі для головної сторінки */
+.hero {
+  min-height: calc(100vh - 68px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(168,130,255,0.08) 0%, transparent 65%),
+              radial-gradient(ellipse 40% 40% at 15% 80%, rgba(109,222,192,0.05) 0%, transparent 55%),
+              radial-gradient(ellipse 50% 50% at 85% 60%, rgba(240,163,208,0.04) 0%, transparent 55%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 300;
+  line-height: 1.06;
+  margin-bottom: 28px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero .lead {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 550px;
+  line-height: 1.8;
+  margin: 0 auto 48px;
+}
+
+/* Плаваючі метелики */
+.butterfly {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.3;
+  pointer-events: none;
+  animation: float 8s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-25px) rotate(8deg); }
+}
+
+/* Картки */
+.tile {
+  background: rgba(15, 15, 26, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 130, 255, 0.15);
+  border-radius: 16px;
+  padding: 36px 28px;
+  transition: all 0.3s;
+}
+.tile:hover {
+  border-color: rgba(168, 130, 255, 0.4);
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(168, 130, 255, 0.15);
+}
+.tile-icon { font-size: 2rem; margin-bottom: 16px; }
+.tile h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 300; margin-bottom: 10px; }
+.tile p { font-size: 0.86rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 20px; }
+.tile a { font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); text-decoration: none; }
+
+/* Тренери */
+.trainers-grid {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.trainer-card {
+  background: rgba(15, 15, 26, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 130, 255, 0.15);
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 380px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.trainer-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(168, 130, 255, 0.4);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.trainer-avatar {
+  width: 140px;
+  height: 140px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 30px rgba(168,130,255,0.3);
+}
+.trainer-name {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+.trainer-title {
+  color: var(--accent2);
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+}
+.trainer-desc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.education-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  text-align: left;
+}
+.education-list li {
+  padding: 6px 0;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  border-bottom: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.education-list li::before {
+  content: "📜";
+  font-size: 0.7rem;
+}
+
+/* Статистика */
+.stats {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 300;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+  
+  <!-- HERO З МЕТЕЛИКАМИ -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="butterfly" style="top: 15%; left: 5%; animation-delay: 0s;">🦋</div>
+    <div class="butterfly" style="top: 70%; right: 8%; animation-delay: 2s;">🦋</div>
+    <div class="butterfly" style="bottom: 20%; left: 15%; animation-delay: 4s;">🦋</div>
+    <div class="butterfly" style="top: 40%; right: 20%; animation-delay: 1s;">🦋</div>
+    
+    <p class="hero-eyebrow fade-up">Психологічна платформа самодопомоги</p>
+    <h1 class="fade-up delay-1">Травма →<br><em>Трансформація</em></h1>
+    <p class="lead fade-up delay-2">Простір, де біль знаходить сенс, а рани стають джерелом сили. Тести, МАК-карти, тренування та індивідуальна підтримка.</p>
+    <div class="hero-cta fade-up delay-3">
+      <a href="diagnostics.html" class="btn btn-primary">🔮 Почати діагностику</a>
+      <a href="contacts.html" class="btn btn-ghost">💬 Зв'язатись з нами</a>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- РОЗДІЛИ ПЛАТФОРМИ -->
+  <section class="section">
+    <div class="container">
+      <div class="eyebrow gap-16">Розділи платформи</div>
+      <h2 class="title gap-16">Ваш простір для зцілення</h2>
+      <p class="lead gap-52">Обирайте те, що резонує з вами сьогодні</p>
+
+      <div class="tiles" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden;">
+        <div class="tile">
+          <div class="tile-icon">🧪</div>
+          <h3>Діагностика</h3>
+          <p>Наукові методики для дорослих та дітей. Шкала Бека, MBTI, Люшер, Матриці Равена</p>
+          <a href="diagnostics.html">Дослідити →</a>
+        </div>
+        <div class="tile">
+          <div class="tile-icon">🃏</div>
+          <h3>МАК-карти</h3>
+          <p>66 авторських карт "Травма → Трансформація" з інтерпретацією, аналізом та техніками</p>
+          <a href="therapy.html">Відкрити колоду →</a>
+        </div>
+        <div class="tile">
+          <div class="tile-icon">📚</div>
+          <h3>Освіта</h3>
+          <p>Техніки самодопомоги, реакції виживання, статті та відео-практики</p>
+          <a href="education.html">Пізнавати →</a>
+        </div>
+        <div class="tile">
+          <div class="tile-icon">🧠</div>
+          <h3>Тренування</h3>
+          <p>Когнітивні вправи, пам'ять, увага, медитації та техніка "Внутрішня фортеця"</p>
+          <a href="training.html">Тренувати →</a>
+        </div>
+        <div class="tile">
+          <div class="tile-icon">🎓</div>
+          <h3>Курси</h3>
+          <p>Авторський курс "Від фронту до дому". Групи підтримки для ветеранів та родин</p>
+          <a href="courses.html">Долучитись →</a>
+        </div>
+        <div class="tile">
+          <div class="tile-icon">🤖</div>
+          <h3>AI-чат</h3>
+          <p>Навчений психологічний помічник. Техніки, методики, відповіді на запитання</p>
+          <a href="chat.html">Спілкуватись →</a>
+        </div>
+        <div class="tile">
+          <div class="tile-icon">📖</div>
+          <h3>Книга</h3>
+          <p>"Інтегративна психотерапія" — повний текст онлайн безкоштовно</p>
+          <a href="book.html">Читати →</a>
+        </div>
+        <div class="tile">
+          <div class="tile-icon">💬</div>
+          <h3>Контакти</h3>
+          <p>Telegram, Signal, Instagram, телефон — ми на зв'язку</p>
+          <a href="contacts.html">Написати →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- НАШІ ФАХІВЦІ -->
+  <section class="section">
+    <div class="container">
+      <div class="eyebrow gap-16">Наша команда</div>
+      <h2 class="title gap-16">Хто буде поруч</h2>
+      <p class="lead gap-40">Ми не просто психологи — ми пройшли той самий шлях, який допомагаємо пройти вам</p>
+
+      <div class="trainers-grid">
+        <!-- Катерина Тарасова -->
+        <div class="trainer-card">
+          <div class="trainer-avatar">🦋</div>
+          <div class="trainer-name">Катерина Тарасова</div>
+          <div class="trainer-title">Кризовий психолог, ветеранка війни (УБД), травматерапевт</div>
+          <p class="trainer-desc">Практичний психолог із досвідом роботи до 2022 року, чий професійний шлях був докорінно змінений повномасштабним вторгненням. Приєднавшись до лав ЗСУ у 2022 році, пройшла шлях як учасник бойових дій, що дозволило поєднати академічні знання з реальним досвідом виживання та підтримки побратимів у бойових умовах.</p>
+          <div class="education-list">
+            <li>Магістр практичної психології — ВМУРоЛ «Україна» (2014)</li>
+            <li>Менеджер TRiM (Управління травматичним стресом)</li>
+            <li>EMDR-практик, КПТ-консультант</li>
+            <li>Старший бойовий медик, інструктор TCCC</li>
+            <li>Авторка МАК-карт "Травма → Трансформація"</li>
+            <li>Фасилітаторка груп підтримки для вразливих спільнот</li>
+          </div>
+        </div>
+
+        <!-- Анастасія Кульчицька -->
+        <div class="trainer-card">
+          <div class="trainer-avatar">🌿</div>
+          <div class="trainer-name">Анастасія Кульчицька</div>
+          <div class="trainer-title">Практичний психолог, сімейна терапевтка</div>
+          <p class="trainer-desc">Психологиня з глибоким розумінням сімейної динаміки та комунікації в родинах військових. Допомагаю долати емоційні труднощі, відновлювати внутрішню рівновагу та будувати здорові стосунки навіть після травматичного досвіду.</p>
+          <div class="education-list">
+            <li>Магістр практичної психології</li>
+            <li>Консультант з військової психології</li>
+            <li>Спеціаліст з дитячої та сімейної психології</li>
+            <li>Фахівчиня з комунікації в родинах військових</li>
+            <li>Співавторка курсу "Від фронту до дому"</li>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- КНИГА ОНЛАЙН -->
+  <section class="section">
+    <div class="container">
+      <div class="eyebrow gap-16">Книга</div>
+      <h2 class="title gap-16">Інтегративна психотерапія</h2>
+      <p class="lead gap-40">Практичний посібник для психологів, кризових фахівців та всіх, хто працює з травмою. 24 розділи, 10 частин, реальні кейси та техніки.</p>
+      <a href="book.html" class="btn btn-primary">📖 Читати онлайн безкоштовно →</a>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- СТАТИСТИКА -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="stats">
+        <div class="stat"><div class="stat-num">66</div><div class="stat-label">МАК-карт</div></div>
+        <div class="stat"><div class="stat-num">10+</div><div class="stat-label">психологічних тестів</div></div>
+        <div class="stat"><div class="stat-num">24</div><div class="stat-label">розділи книги</div></div>
+        <div class="stat"><div class="stat-num">30+</div><div class="stat-label">технік самодопомоги</div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+    <p style="margin-top: 8px;">
+      📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 
+      📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a>
+    </p>
+    <p>
+      📷 <a href="https://instagram.com/x_psydoc_x" target="_blank">@x_psydoc_x</a> | 
+      📷 <a href="https://instagram.com/anactacijka" target="_blank">@anactacijka</a> | 
+      💬 Telegram: <a href="https://t.me/x_Psydoc_x" target="_blank">@x_Psydoc_x</a> / <a href="https://t.me/anactacijka" target="_blank">@anactacijka</a> |
+      🔒 Signal: psydoc.13
+    </p>
+    <p style="margin-top: 8px;">
+      <a href="offer.html">Договір оферти</a> | 
+      <a href="privacy.html">Політика конфіденційності</a>
+    </p>
+  </footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
