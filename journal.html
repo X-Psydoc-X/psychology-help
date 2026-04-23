@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Щоденник МАК-карт — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --paper: #0f0f1a;
+  --paper-line: rgba(168,130,255,0.08);
+  --ink: #eae6f4;
+  --ink-muted: rgba(234,230,244,0.4);
+  --accent-soft: rgba(168,130,255,0.15);
+}
+
+.journal-header {
+  text-align: center;
+  padding: 48px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.journal-header h1 {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.journal-header p {
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 16px auto 0;
+  font-size: 0.9rem;
+}
+
+/* Карта дня */
+.card-of-day {
+  background: var(--surface);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 48px;
+  text-align: center;
+}
+.card-of-day-icon {
+  font-size: 4rem;
+  margin-bottom: 12px;
+}
+.card-of-day-word {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--accent);
+}
+.card-of-day-prompt {
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 12px 0;
+}
+.btn-draw {
+  margin-top: 16px;
+}
+
+/* Форма запису */
+.journal-form {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+.form-section {
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--border);
+}
+.form-section:last-child {
+  border-bottom: none;
+}
+.form-section label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  margin-bottom: 16px;
+  color: var(--accent);
+}
+.form-section textarea, .form-section input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  resize: vertical;
+}
+.form-section textarea:focus, .form-section input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+/* Емоції */
+.emotion-slider {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.emotion-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.emotion-btn.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #080810;
+}
+
+/* Шкала */
+.scale-row {
+  margin-bottom: 16px;
+}
+.scale-row span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.scale-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.scale-btn {
+  flex: 1;
+  min-width: 40px;
+  padding: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-align: center;
+}
+.scale-btn.selected {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: #080810;
+}
+
+/* Історія записів */
+.entries-list {
+  margin-top: 48px;
+}
+.entry-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.entry-card:hover {
+  border-color: var(--border-accent);
+}
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--surface2);
+  cursor: pointer;
+}
+.entry-date {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+.entry-card-word {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+.entry-actions {
+  display: flex;
+  gap: 12px;
+}
+.entry-content {
+  padding: 20px;
+  display: none;
+}
+.entry-content.open {
+  display: block;
+}
+.entry-section {
+  margin-bottom: 20px;
+}
+.entry-section-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.entry-section-text {
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 0.9rem;
+  background: var(--surface2);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+}
+.entry-emotion {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--accent-soft);
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+/* Статистика */
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+@media(max-width:600px){
+  .stats-summary { grid-template-columns: repeat(2, 1fr); }
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+.stat-number {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--accent);
+}
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.btn-icon:hover {
+  background: var(--surface);
+}
+.export-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="profile.html">👤 Профіль</a></li>
+    <li><a href="chat.html">🤖 AI-чат</a></li>
+    <li><a href="journal.html" class="active">📔 Щоденник</a></li>
+    <li><a href="book.html">📖 Книга</a></li>
+    <li><a href="blog.html">📝 Блог</a></li>
+    <li><a href="courses.html">🎓 Курси</a></li>
+    <li><a href="sessions.html">💬 Сесії</a></li>
+    <li><a href="resources.html">📚 Ресурси</a></li>
+    <li><a href="about.html">ℹ️ Про нас</a></li>
+    <li><a href="crisis.html" style="color:#ff5555;">🆘 Кризова</a></li>
+  </ul>
+  <div class="nav-right"><span>Доступів:</span><span class="nav-badge" id="nav-balance">0</span></div>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div class="journal-header">
+    <h1>📔 Щоденник роботи з картами</h1>
+    <p>Фіксуй свої інсайти, відстежуй прогрес. Кожен запис — це крок до себе.</p>
+  </div>
+
+  <!-- Статистика -->
+  <div class="stats-summary" id="stats-summary">
+    <div class="stat-card"><div class="stat-number" id="stat-total">0</div><div class="stat-label">всього записів</div></div>
+    <div class="stat-card"><div class="stat-number" id="stat-week">0</div><div class="stat-label">за останні 7 днів</div></div>
+    <div class="stat-card"><div class="stat-number" id="stat-unique">0</div><div class="stat-label">різних карт</div></div>
+    <div class="stat-card"><div class="stat-number" id="stat-avg">0</div><div class="stat-label">сер. зміна стану</div></div>
+  </div>
+
+  <!-- Карта дня -->
+  <div class="card-of-day">
+    <div class="card-of-day-icon" id="cod-icon">🃏</div>
+    <div class="card-of-day-word" id="cod-word">Карта дня</div>
+    <div class="card-of-day-prompt" id="cod-prompt">Натисніть кнопку, щоб витягнути карту</div>
+    <button class="btn btn-primary btn-draw" onclick="drawCardOfDay()">🎴 Витягнути карту дня</button>
+  </div>
+
+  <!-- Форма запису -->
+  <form id="journal-form" class="journal-form">
+    <div class="form-section">
+      <label>🎴 Карта</label>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <input type="text" id="card-emoji" placeholder="Емодзі карти" style="width:80px;">
+        <input type="text" id="card-word" placeholder="Назва карти" style="flex:2;">
+        <input type="text" id="card-prompt" placeholder="Питання карти" style="flex:3;">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <label>💭 Що відбувається? (вільний запис)</label>
+      <textarea id="entry-reflection" rows="4" placeholder="Напиши про свої думки, відчуття, асоціації... Що резонує? Що опирається?"></textarea>
+    </div>
+
+    <div class="form-section">
+      <label>🫀 Тілесні відчуття</label>
+      <textarea id="entry-body" rows="3" placeholder="Де в тілі відгукнулась карта? Напруга, тепло, поколювання, оніміння?"></textarea>
+    </div>
+
+    <div class="form-section">
+      <label>🎯 Інсайт / Відкриття</label>
+      <textarea id="entry-insight" rows="3" placeholder="Що нового ти дізнався(лась) про себе? Яка думка чи відчуття з'явились вперше?"></textarea>
+    </div>
+
+    <div class="form-section">
+      <label>💪 Ресурс / Дія</label>
+      <textarea id="entry-action" rows="2" placeholder="Що ти зробиш після цього запису? Який маленький крок?"></textarea>
+    </div>
+
+    <div class="form-section">
+      <label>😊 Основний емоційний стан після роботи</label>
+      <div class="emotion-slider" id="emotion-buttons">
+        <button type="button" class="emotion-btn" data-emotion="😢 Сум">😢 Сум</button>
+        <button type="button" class="emotion-btn" data-emotion="😠 Гнів">😠 Гнів</button>
+        <button type="button" class="emotion-btn" data-emotion="😨 Страх">😨 Страх</button>
+        <button type="button" class="emotion-btn" data-emotion="😐 Спокій">😐 Спокій</button>
+        <button type="button" class="emotion-btn" data-emotion="😊 Радість">😊 Радість</button>
+        <button type="button" class="emotion-btn" data-emotion="🕊️ Прийняття">🕊️ Прийняття</button>
+      </div>
+      <input type="hidden" id="entry-emotion" value="">
+    </div>
+
+    <div class="form-section">
+      <label>📊 Шкала стану (до роботи з картою)</label>
+      <div class="scale-row">
+        <span>1 (дуже погано) → 10 (чудово)</span>
+        <div class="scale-buttons" id="scale-before"></div>
+      </div>
+      <label>📈 Шкала стану (після роботи з картою)</label>
+      <div class="scale-row">
+        <span>1 (дуже погано) → 10 (чудово)</span>
+        <div class="scale-buttons" id="scale-after"></div>
+      </div>
+      <input type="hidden" id="entry-before" value="">
+      <input type="hidden" id="entry-after" value="">
+    </div>
+
+    <div class="form-section">
+      <button type="submit" class="btn btn-primary" style="width:100%;">💾 Зберегти запис</button>
+    </div>
+  </form>
+
+  <!-- Кнопки експорту -->
+  <div class="export-buttons">
+    <button class="btn btn-sm btn-ghost" onclick="exportToJSON()">📥 Експорт JSON</button>
+    <button class="btn btn-sm btn-ghost" onclick="exportToText()">📄 Експорт TXT</button>
+    <button class="btn btn-sm btn-ghost" onclick="clearAllEntries()" style="color:var(--red);">🗑️ Очистити всі записи</button>
+  </div>
+
+  <!-- Історія записів -->
+  <div id="entries-container">
+    <h3 style="font-family:var(--font-display); margin-bottom:20px;">📜 Історія роботи з картами</h3>
+    <div id="entries-list" class="entries-list"></div>
+  </div>
+
+</div>
+</section>
+</div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p>📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a></p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+// ========== КАРТИ ДЛЯ "КАРТИ ДНЯ" ==========
+const CARD_OF_DAY_DECK = [
+  { e: '🌑', w: 'Момент зламу', p: 'Коли вперше ти відчув(ла), що світ перестав бути безпечним?' },
+  { e: '💔', w: 'Розкол', p: 'Яка частина тебе "померла" після того, що сталося?' },
+  { e: '🕳️', w: 'Порожнеча', p: 'Що ти відчуваєш на місці того, що було втрачено?' },
+  { e: '🎭', w: 'Маска виживання', p: 'Яку роль ти граєш, щоб ніхто не побачив твою вразливість?' },
+  { e: '🦋', w: 'Метаморфоза', p: 'Що в тобі вмирає? Що народжується?' },
+  { e: '🌳', w: 'Коріння', p: 'Що тримає тебе, коли земля йде з-під ніг?' },
+  { e: '🕊️', w: 'Мир', p: 'Як для тебе виглядає внутрішній спокій?' },
+  { e: '💎', w: 'Мудрість', p: 'Яку мудрість тобі дала травма?' },
+  { e: '🔥', w: 'Вогонь', p: 'Що запалює твою внутрішню силу?' },
+  { e: '🌊', w: 'Плин', p: 'Що в твоєму житті змінюється, а що залишається незмінним?' }
+];
+
+// ========== ЗБЕРІГАННЯ ЗАПИСІВ ==========
+let entries = JSON.parse(localStorage.getItem('makJournal') || '[]');
+let selectedEmotion = null;
+let selectedBefore = null;
+let selectedAfter = null;
+
+// Ініціалізація шкал (1-10)
+function initScales() {
+  const scaleBefore = document.getElementById('scale-before');
+  const scaleAfter = document.getElementById('scale-after');
+  
+  for (let i = 1; i <= 10; i++) {
+    scaleBefore.innerHTML += `<button type="button" class="scale-btn" data-value="${i}" onclick="selectScale('before', ${i})">${i}</button>`;
+    scaleAfter.innerHTML += `<button type="button" class="scale-btn" data-value="${i}" onclick="selectScale('after', ${i})">${i}</button>`;
+  }
+}
+
+function selectScale(type, value) {
+  const container = type === 'before' ? 'scale-before' : 'scale-after';
+  document.querySelectorAll(`#${container} .scale-btn`).forEach(btn => btn.classList.remove('selected'));
+  event.target.classList.add('selected');
+  if (type === 'before') {
+    selectedBefore = value;
+    document.getElementById('entry-before').value = value;
+  } else {
+    selectedAfter = value;
+    document.getElementById('entry-after').value = value;
+  }
+}
+
+// Емоції
+document.querySelectorAll('.emotion-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedEmotion = btn.dataset.emotion;
+    document.getElementById('entry-emotion').value = selectedEmotion;
+  });
+});
+
+// Карта дня
+function drawCardOfDay() {
+  const randomCard = CARD_OF_DAY_DECK[Math.floor(Math.random() * CARD_OF_DAY_DECK.length)];
+  document.getElementById('cod-icon').textContent = randomCard.e;
+  document.getElementById('cod-word').textContent = randomCard.w;
+  document.getElementById('cod-prompt').textContent = randomCard.p;
+  
+  // Автоматично заповнити форму
+  document.getElementById('card-emoji').value = randomCard.e;
+  document.getElementById('card-word').value = randomCard.w;
+  document.getElementById('card-prompt').value = randomCard.p;
+  
+  showToast(`Карта дня: ${randomCard.e} ${randomCard.w}`);
+}
+
+// Збереження запису
+document.getElementById('journal-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const cardEmoji = document.getElementById('card-emoji').value;
+  const cardWord = document.getElementById('card-word').value;
+  const cardPrompt = document.getElementById('card-prompt').value;
+  
+  if (!cardWord) {
+    showToast('Будь ласка, вкажіть карту');
+    return;
+  }
+  
+  const entry = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    card: { emoji: cardEmoji || '🃏', word: cardWord, prompt: cardPrompt },
+    reflection: document.getElementById('entry-reflection').value,
+    body: document.getElementById('entry-body').value,
+    insight: document.getElementById('entry-insight').value,
+    action: document.getElementById('entry-action').value,
+    emotion: selectedEmotion,
+    beforeState: selectedBefore,
+    afterState: selectedAfter
+  };
+  
+  entries.unshift(entry);
+  localStorage.setItem('makJournal', JSON.stringify(entries));
+  
+  // Очищення форми
+  document.getElementById('entry-reflection').value = '';
+  document.getElementById('entry-body').value = '';
+  document.getElementById('entry-insight').value = '';
+  document.getElementById('entry-action').value = '';
+  document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+  selectedEmotion = selectedBefore = selectedAfter = null;
+  
+  showToast('✓ Запис збережено');
+  renderEntries();
+  updateStats();
+});
+
+// Відображення записів
+function renderEntries() {
+  const container = document.getElementById('entries-list');
+  if (entries.length === 0) {
+    container.innerHTML = `<div class="empty-state">📭 Ще немає записів. Витягніть карту дня та почніть вести щоденник.</div>`;
+    return;
+  }
+  
+  container.innerHTML = entries.map(entry => `
+    <div class="entry-card">
+      <div class="entry-header" onclick="toggleEntry(${entry.id})">
+        <div>
+          <span class="entry-date">${new Date(entry.date).toLocaleDateString('uk-UA')} ${new Date(entry.date).toLocaleTimeString('uk-UA', {hour:'2-digit', minute:'2-digit'})}</span>
+          <div style="margin-top:6px;"><span class="entry-card-word">${entry.card.emoji} ${entry.card.word}</span></div>
+        </div>
+        <div class="entry-actions">
+          <button class="btn-icon" onclick="event.stopPropagation(); deleteEntry(${entry.id})" title="Видалити">🗑️</button>
+        </div>
+      </div>
+      <div class="entry-content" id="entry-content-${entry.id}">
+        ${entry.reflection ? `<div class="entry-section"><div class="entry-section-title">💭 Роздуми</div><div class="entry-section-text">${escapeHtml(entry.reflection)}</div></div>` : ''}
+        ${entry.body ? `<div class="entry-section"><div class="entry-section-title">🫀 Тілесні відчуття</div><div class="entry-section-text">${escapeHtml(entry.body)}</div></div>` : ''}
+        ${entry.insight ? `<div class="entry-section"><div class="entry-section-title">🎯 Інсайт</div><div class="entry-section-text">${escapeHtml(entry.insight)}</div></div>` : ''}
+        ${entry.action ? `<div class="entry-section"><div class="entry-section-title">💪 Дія</div><div class="entry-section-text">${escapeHtml(entry.action)}</div></div>` : ''}
+        <div class="entry-section">
+          <div class="entry-section-title">😊 Емоційний стан</div>
+          <div class="entry-section-text">
+            ${entry.emotion ? `<span class="entry-emotion">${entry.emotion}</span>` : ''}
+            ${entry.beforeState ? ` | До: ${entry.beforeState}/10 → Після: ${entry.afterState}/10` : ''}
+            ${entry.beforeState && entry.afterState ? (entry.afterState > entry.beforeState ? ' 📈 Покращення' : entry.afterState < entry.beforeState ? ' 📉 Погіршення' : ' 🔄 Без змін') : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Статистика
+function updateStats() {
+  document.getElementById('stat-total').textContent = entries.length;
+  
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekEntries = entries.filter(e => new Date(e.date) > weekAgo);
+  document.getElementById('stat-week').textContent = weekEntries.length;
+  
+  const uniqueCards = new Set(entries.map(e => e.card.word)).size;
+  document.getElementById('stat-unique').textContent = uniqueCards;
+  
+  const avgChange = entries.filter(e => e.beforeState && e.afterState).reduce((acc, e) => acc + (e.afterState - e.beforeState), 0) / (entries.filter(e => e.beforeState && e.afterState).length || 1);
+  document.getElementById('stat-avg').textContent = avgChange.toFixed(1);
+}
+
+// Допоміжні функції
+function toggleEntry(id) {
+  const content = document.getElementById(`entry-content-${id}`);
+  content?.classList.toggle('open');
+}
+
+function deleteEntry(id) {
+  if (confirm('Видалити цей запис?')) {
+    entries = entries.filter(e => e.id !== id);
+    localStorage.setItem('makJournal', JSON.stringify(entries));
+    renderEntries();
+    updateStats();
+    showToast('Запис видалено');
+  }
+}
+
+function clearAllEntries() {
+  if (confirm('⚠️ Всі записи щоденника будуть видалені без можливості відновлення. Продовжити?')) {
+    entries = [];
+    localStorage.setItem('makJournal', JSON.stringify(entries));
+    renderEntries();
+    updateStats();
+    showToast('Всі записи очищено');
+  }
+}
+
+function exportToJSON() {
+  const data = {
+    exportDate: new Date().toISOString(),
+    entries: entries,
+    totalCount: entries.length
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `mak-journal-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Експорт JSON готовий');
+}
+
+function exportToText() {
+  let text = `ЩОДЕННИК РОБОТИ З МАК-КАРТАМИ\nДата експорту: ${new Date().toLocaleString('uk-UA')}\n`;
+  text += `Всього записів: ${entries.length}\n${'='.repeat(60)}\n\n`;
+  
+  entries.forEach((entry, idx) => {
+    text += `[${idx+1}] ${new Date(entry.date).toLocaleString('uk-UA')}\n`;
+    text += `Карта: ${entry.card.emoji} ${entry.card.word}\n`;
+    text += `Питання: ${entry.card.prompt}\n`;
+    if (entry.reflection) text += `Роздуми: ${entry.reflection}\n`;
+    if (entry.body) text += `Тіло: ${entry.body}\n`;
+    if (entry.insight) text += `Інсайт: ${entry.insight}\n`;
+    if (entry.action) text += `Дія: ${entry.action}\n`;
+    if (entry.emotion) text += `Емоція: ${entry.emotion}\n`;
+    if (entry.beforeState) text += `Стан: ${entry.beforeState} → ${entry.afterState}\n`;
+    text += `${'-'.repeat(40)}\n\n`;
+  });
+  
+  const blob = new Blob([text], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `mak-journal-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Експорт TXT готовий');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML.replace(/\n/g, '<br>');
+}
+
+// Ініціалізація
+initScales();
+renderEntries();
+updateStats();
+</script>
+</body>
+</html>

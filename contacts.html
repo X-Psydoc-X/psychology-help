@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контакти — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.contacts-grid {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 48px 0;
+}
+.contact-card {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  min-width: 280px;
+  flex: 1;
+  transition: var(--transition);
+}
+.contact-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+.contact-avatar { font-size: 4rem; text-align: center; margin-bottom: 16px; }
+.contact-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.contact-title {
+  text-align: center;
+  color: var(--accent2);
+  font-size: 0.8rem;
+  margin-bottom: 24px;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.contact-item:last-child { border-bottom: none; }
+.contact-icon { font-size: 1.2rem; min-width: 32px; }
+.contact-item a { color: var(--text-muted); text-decoration: none; transition: var(--transition); }
+.contact-item a:hover { color: var(--accent2); }
+.info-box {
+  background: rgba(20, 20, 36, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  text-align: center;
+  margin-top: 32px;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="courses.html">Курси</a></li>
+    <li><a href="chat.html">AI-чат</a></li>
+    <li><a href="contacts.html" class="active">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div class="eyebrow gap-16">Зв'язатись з нами</div>
+  <h1 class="title gap-16">Ми поряд</h1>
+  <p class="lead gap-40">Оберіть зручний спосіб зв'язку. Ми відповімо у робочий час (пн-пт 9:00-18:00).</p>
+
+  <div class="contacts-grid">
+    <!-- КАТЕРИНА ТАРАСОВА -->
+    <div class="contact-card">
+      <div class="contact-avatar">🦋</div>
+      <div class="contact-name">Катерина Тарасова</div>
+      <div class="contact-title">Кризовий психолог, ветеранка ЗСУ</div>
+      <div class="contact-item"><span class="contact-icon">📞</span><span>Телефон: <a href="tel:+380635110069">+38 063 511 0069</a></span></div>
+      <div class="contact-item"><span class="contact-icon">📷</span><span>Instagram: <a href="https://instagram.com/x_psydoc_x" target="_blank">@x_psydoc_x</a></span></div>
+      <div class="contact-item"><span class="contact-icon">🔒</span><span>Signal: psydoc.13</span></div>
+      <div class="contact-item"><span class="contact-icon">💬</span><span>Telegram: <a href="https://t.me/x_Psydoc_x" target="_blank">@x_Psydoc_x</a></span></div>
+      <div class="contact-item"><span class="contact-icon">✉️</span><span>Email: <a href="mailto:ekaterinatarasova13011990@gmail.com">ekaterinatarasova13011990@gmail.com</a></span></div>
+    </div>
+
+    <!-- АНАСТАСІЯ КУЛЬЧИЦЬКА -->
+    <div class="contact-card">
+      <div class="contact-avatar">🌿</div>
+      <div class="contact-name">Анастасія Кульчицька</div>
+      <div class="contact-title">Психологиня, сімейна терапевтка</div>
+      <div class="contact-item"><span class="contact-icon">📞</span><span>Телефон: <a href="tel:+380682417264">+38 068 241 7264</a></span></div>
+      <div class="contact-item"><span class="contact-icon">📷</span><span>Instagram: <a href="https://instagram.com/anactacijka" target="_blank">@anactacijka</a></span></div>
+      <div class="contact-item"><span class="contact-icon">💬</span><span>Telegram: <a href="https://t.me/anactacijka" target="_blank">@anactacijka</a></span></div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <h3 style="font-family: var(--font-display); margin-bottom: 16px;">📍 Очні консультації</h3>
+    <p style="color: var(--text-muted);">м. Рівне (адреса надається при записі)</p>
+    <h3 style="font-family: var(--font-display); margin: 24px 0 16px;">💻 Онлайн-консультації</h3>
+    <p style="color: var(--text-muted);">Zoom, Google Meet, Signal, Telegram</p>
+  </div>
+
+</div>
+</section>
+</div>
+
+<footer>
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p>📞 Катерина: <a href="tel:+380635110069">+38 063 511 0069</a> | 📞 Анастасія: <a href="tel:+380682417264">+38 068 241 7264</a></p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Про нас — PsyDoc</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.about-hero {
+  text-align: center;
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.about-grid {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+}
+.about-photo {
+  flex: 1;
+  min-width: 250px;
+  text-align: center;
+}
+.avatar-circle {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  margin: 0 auto 20px;
+}
+.about-text {
+  flex: 2;
+  min-width: 280px;
+}
+.bio-section {
+  margin-bottom: 48px;
+}
+.bio-section h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  color: var(--accent);
+}
+.timeline {
+  border-left: 2px solid var(--accent);
+  padding-left: 24px;
+  margin: 24px 0;
+}
+.timeline-item {
+  margin-bottom: 24px;
+}
+.timeline-year {
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.edu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+@media(max-width:600px){ .edu-grid { grid-template-columns: 1fr; } }
+.edu-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.edu-icon { font-size: 1.8rem; margin-bottom: 8px; }
+
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+@media(max-width:800px){ .cert-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width:500px){ .cert-grid { grid-template-columns: 1fr; } }
+.cert-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.cert-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-3px);
+}
+.cert-name {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.cert-date {
+  font-size: 0.7rem;
+  color: var(--accent2);
+}
+.cert-org {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.quote {
+  font-style: italic;
+  padding: 24px;
+  background: var(--surface2);
+  border-left: 3px solid var(--accent);
+  margin: 32px 0;
+  color: var(--text-muted);
+}
+.team-grid {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 32px 0;
+}
+.team-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  min-width: 250px;
+  flex: 1;
+}
+.team-avatar {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, var(--surface2), var(--surface3));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin: 0 auto 16px;
+  border: 1px solid var(--border-accent);
+}
+.team-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+.team-title {
+  font-size: 0.75rem;
+  color: var(--accent2);
+  margin-bottom: 16px;
+}
+.contacts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 16px;
+}
+@media(max-width:700px){ .contacts-grid { grid-template-columns: 1fr; } }
+.contact-card {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid var(--border);
+}
+.contact-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.contact-name.katya { color: var(--accent); }
+.contact-name.nastya { color: var(--accent2); }
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.contact-icon { font-size: 1.1rem; min-width: 32px; }
+.contact-item a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+.contact-item a:hover { color: var(--accent2); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span>◈</span> PsyDoc</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="diagnostics.html">Діагностика</a></li>
+    <li><a href="therapy.html">МАК-карти</a></li>
+    <li><a href="education.html">Освіта</a></li>
+    <li><a href="training.html">Тренування</a></li>
+    <li><a href="profile.html">👤 Профіль</a></li>
+    <li><a href="chat.html">🤖 AI-чат</a></li>
+    <li><a href="journal.html">📔 Щоденник</a></li>
+    <li><a href="book.html">📖 Книга</a></li>
+    <li><a href="blog.html">📝 Блог</a></li>
+    <li><a href="courses.html">🎓 Курси</a></li>
+    <li><a href="sessions.html">💬 Сесії</a></li>
+    <li><a href="resources.html">📚 Ресурси</a></li>
+    <li><a href="about.html" class="active">ℹ️ Про нас</a></li>
+    <li><a href="crisis.html" style="color:#ff5555;">🆘 Кризова</a></li>
+  </ul>
+  <div class="nav-right"><span>Доступів:</span><span class="nav-badge" id="nav-balance">0</span></div>
+</nav>
+
+<div class="page-wrap">
+<section class="section">
+<div class="container">
+
+  <div class="about-hero">
+    <h1 class="title">Катерина Тарасова<br><span style="color:var(--accent);">PsyDoc</span></h1>
+    <p class="lead" style="margin-top: 16px;">Травматерапевт, кризовий психолог, ветеранка війни (УБД)</p>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-photo">
+      <div class="avatar-circle">🦋</div>
+      <h3 style="font-family: var(--font-display);">Катерина Тарасова</h3>
+      <p style="color: var(--accent);">Травматерапевт, кризовий психолог</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem;">Ветеранка війни (УБД)<br>Магістр практичної психології<br>Авторка МАК-карт "Травма → Трансформація"</p>
+    </div>
+    <div class="about-text">
+      <div class="quote">
+        "Практичний психолог із досвідом роботи до 2022 року, чий професійний шлях був докорінно змінений повномасштабним вторгненням. Приєднавшись до лав ЗСУ у 2022 році, пройшла шлях як учасник бойових дій, що дозволило поєднати академічні знання з реальним досвідом виживання та підтримки побратимів у бойових умовах."
+      </div>
+      <p style="color: var(--text-muted); margin-top: 16px;">Сьогодні я — ветеранка війни, яка спеціалізується на кризовій допомозі, КПТ, психосоматиці, арт-терапії та роботі з метафоричними картами. Моя унікальна перевага — здатність працювати з військовою травмою на засадах професійної етики та глибокого власного розуміння бойового стресу.</p>
+      <p style="color: var(--text-muted); margin-top: 16px;"><strong>Принцип «Рівний — Рівному» на професійному рівні:</strong> Мій статус УБД дозволяє миттєво встановлювати довірчий контакт із ветеранами та військовослужбовцями. Я володію специфічною мовою та розумінням субкультури, що значно скорочує шлях від першої зустрічі до терапевтичного альянсу.</p>
+    </div>
+  </div>
+
+  <!-- КОМАНДА -->
+  <div class="bio-section">
+    <h3>👥 Наша команда</h3>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">🦋</div>
+        <div class="team-name">Катерина Тарасова</div>
+        <div class="team-title">Кризовий психолог, ветеранка ЗСУ, травматерапевт, авторка МАК-карт</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">🌿</div>
+        <div class="team-name">Анастасія Кульчицька</div>
+        <div class="team-title">Психологиня, сімейна терапевтка, фахівчиня з комунікації в родинах військових</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- БІОГРАФІЯ -->
+  <div class="bio-section">
+    <h3>📜 Біографія</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-year">2010</div><div>Молодший спеціаліст із правознавства — ВМУРоЛ «Україна»</div></div>
+      <div class="timeline-item"><div class="timeline-year">2013</div><div>Бакалавр психології — ВМУРоЛ «Україна»</div></div>
+      <div class="timeline-item"><div class="timeline-year">2013</div><div>Психологічна підтримка осіб під наглядом інспекції</div></div>
+      <div class="timeline-item"><div class="timeline-year">2014</div><div>Магістр практичної психології — ВМУРоЛ «Україна»</div></div>
+      <div class="timeline-item"><div class="timeline-year">2016</div><div>Магістр філології (англійська мова) — МЕГУ ім. С. Дем'янчука</div></div>
+      <div class="timeline-item"><div class="timeline-year">2017-2022</div><div>Приватна практика: арт-терапія, МАК-карти, консультування</div></div>
+      <div class="timeline-item"><div class="timeline-year">2022-2025</div><div>Військовий психолог, старший бойовий медик, фахівець з кадрового та правового супроводу — Збройні Сили України</div></div>
+      <div class="timeline-item"><div class="timeline-year">2025 - тепер</div><div>Травматерапевт, кризовий психолог — приватна практика та спеціалізовані проєкти</div></div>
+    </div>
+  </div>
+
+  <!-- ОСВІТА -->
+  <div class="bio-section">
+    <h3>🎓 Освіта</h3>
+    <div class="edu-grid">
+      <div class="edu-card"><div class="edu-icon">🎓</div><div><strong>Магістр практичної психології</strong><br>ВМУРоЛ «Україна» (2014)</div></div>
+      <div class="edu-card"><div class="edu-icon">🎓</div><div><strong>Бакалавр психології</strong><br>ВМУРоЛ «Україна» (2013)</div></div>
+      <div class="edu-card"><div class="edu-icon">📖</div><div><strong>Магістр філології (англійська мова)</strong><br>МЕГУ ім. С. Дем'янчука (2016)</div></div>
+      <div class="edu-card"><div class="edu-icon">⚖️</div><div><strong>Молодший спеціаліст із правознавства</strong><br>ВМУРоЛ «Україна» (2010)</div></div>
+    </div>
+  </div>
+
+  <!-- КЛЮЧОВІ КОМПЕТЕНЦІЇ -->
+  <div class="bio-section">
+    <h3>💡 Ключові компетенції</h3>
+    <div class="edu-grid">
+      <div class="edu-card"><div class="edu-icon">🧠</div><div><strong>Кризова психотерапія</strong><br>ПТСР, КПТСР, суїцидальна превенція</div></div>
+      <div class="edu-card"><div class="edu-icon">🔄</div><div><strong>EMDR та травматерапія</strong><br>Доказові протоколи</div></div>
+      <div class="edu-card"><div class="edu-icon">💬</div><div><strong>TRiM Manager</strong><br>Управління травматичним стресом</div></div>
+      <div class="edu-card"><div class="edu-icon">🎨</div><div><strong>Арт-терапія та МАК-карти</strong><br>Авторська колода "Травма → Трансформація"</div></div>
+      <div class="edu-card"><div class="edu-icon">🫀</div><div><strong>Психосоматика</strong><br>Робота з хронічним болем та стрес-розладами</div></div>
+      <div class="edu-card"><div class="edu-icon">⚕️</div><div><strong>TCCC інструктор</strong><br>Тактична медицина в бойових умовах</div></div>
+    </div>
+  </div>
+
+  <!-- СЕРТИФІКАТИ -->
+  <div class="bio-section">
+    <h3>📜 Сертифікати та підвищення кваліфікації</h3>
+    <div class="cert-grid" id="cert-grid"></div>
+    <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 16px; text-align: center;">Натисніть на сертифікат для перегляду деталей</p>
+  </div>
+
+  <!-- ПУБЛІКАЦІЇ -->
+  <div class="bio-section">
+    <h3>📖 Публікації</h3>
+    <ul style="color: var(--text-muted); line-height: 1.8;">
+      <li>"Інтегративна психотерапія та психологічне консультування" (2024) — практичний посібник</li>
+      <li>Статті в журналі "Психологічна допомога в умовах війни"</li>
+      <li>Авторська колода МАК-карт "Травма → Трансформація" (66 карт)</li>
+    </ul>
+  </div>
+
+  <!-- КОНТАКТИ -->
+  <div class="bio-section">
+    <h3>📞 Контакти</h3>
+    <div class="contacts-grid">
+      <div class="contact-card">
+        <div class="contact-name katya">🦋 Катерина Тарасова</div>
+        <div class="contact-item"><span class="contact-icon">📱</span><span><strong>Телефон:</strong> <a href="tel:+380635110069">+38 063 511 0069</a></span></div>
+        <div class="contact-item"><span class="contact-icon">📷</span><span><strong>Instagram:</strong> <a href="https://instagram.com/x_psydoc_x" target="_blank">@x_psydoc_x</a></span></div>
+        <div class="contact-item"><span class="contact-icon">🔒</span><span><strong>Signal:</strong> psydoc.13</span></div>
+        <div class="contact-item"><span class="contact-icon">💬</span><span><strong>Telegram:</strong> <a href="https://t.me/x_Psydoc_x" target="_blank">@x_Psydoc_x</a></span></div>
+        <div class="contact-item"><span class="contact-icon">✉️</span><span><strong>Email:</strong> <a href="mailto:ekaterinatarasova13011990@gmail.com">ekaterinatarasova13011990@gmail.com</a></span></div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-name nastya">🌿 Анастасія Кульчицька</div>
+        <div class="contact-item"><span class="contact-icon">📱</span><span><strong>Телефон:</strong> <a href="tel:+380682417264">+38 068 241 7264</a></span></div>
+        <div class="contact-item"><span class="contact-icon">📷</span><span><strong>Instagram:</strong> <a href="https://instagram.com/anactacijka" target="_blank">@anactacijka</a></span></div>
+        <div class="contact-item"><span class="contact-icon">💬</span><span><strong>Telegram:</strong> <a href="https://t.me/anactacijka" target="_blank">@anactacijka</a></span></div>
+      </div>
+    </div>
+    <p style="margin-top: 16px; font-size: 0.75rem; color: var(--text-dim); text-align: center;">📌 Зв'язатися можна через будь-який зручний месенджер. Відповідаємо у робочий час (пн-пт 9:00-18:00).</p>
+  </div>
+
+</div>
+</section>
+</div>
+
+<footer style="padding: 36px 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-dim); font-size: 0.7rem;">
+  <p>© 2026 PsyDoc — Психологічна платформа Катерини Тарасової та Анастасії Кульчицької</p>
+  <p style="margin-top: 8px;">
+    📞 Катерина: <a href="tel:+380635110069" style="color: var(--accent2);">+38 063 511 0069</a> | 
+    📞 Анастасія: <a href="tel:+380682417264" style="color: var(--accent2);">+38 068 241 7264</a>
+  </p>
+  <p>
+    📷 <a href="https://instagram.com/x_psydoc_x" target="_blank" style="color: var(--accent2);">@x_psydoc_x</a> | 
+    📷 <a href="https://instagram.com/anactacijka" target="_blank" style="color: var(--accent2);">@anactacijka</a> | 
+    💬 Telegram: <a href="https://t.me/x_Psydoc_x" target="_blank" style="color: var(--accent2);">@x_Psydoc_x</a> / <a href="https://t.me/anactacijka" target="_blank" style="color: var(--accent2);">@anactacijka</a>
+  </p>
+  <p style="margin-top: 8px;">
+    <a href="offer.html" style="color: var(--accent);">Договір оферти</a> | 
+    <a href="privacy.html" style="color: var(--accent);">Політика конфіденційності</a> |
+    <a href="crisis.html" style="color: #ff5555;">🆘 Кризова допомога 24/7</a>
+  </p>
+</footer>
+
+<!-- MODAL ДЛЯ СЕРТИФІКАТА -->
+<div class="overlay" id="cert-modal">
+  <div class="modal" style="max-width: 500px;">
+    <button class="modal-close" onclick="closeModal('cert-modal')">×</button>
+    <h3 id="cert-modal-title" style="font-family: var(--font-display);"></h3>
+    <p id="cert-modal-org" style="color: var(--accent2); margin: 8px 0;"></p>
+    <p id="cert-modal-date" style="color: var(--text-dim); font-size: 0.8rem;"></p>
+    <hr style="border-color: var(--border); margin: 16px 0;">
+    <p id="cert-modal-desc" style="color: var(--text-muted); line-height: 1.6;"></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+// ========== СЕРТИФІКАТИ ==========
+const CERTIFICATES = [
+  { name: "Травма — не вирок: Емпатія, Методи, Досвід та Ресурс", org: "UpPro School", date: "06.04.2026", hours: "0,1 кредити ЄКТС", id: "aea7b047-c3d7-4c60-ada2-e6eeb688454" },
+  { name: "Локус контролю в умовах війни", org: "Проєкт VELA (США-Україна)", date: "2025", hours: "5 годин", desc: "Внутрішній та зовнішній контроль, нейробіологія стресу, СДУГ, РАС, механізми дезадаптації" },
+  { name: "Фасилітація груп підтримки", org: "UpPro School", date: "30.09.2025 - 20.10.2025", hours: "30 академічних годин (1,0 кредит ЄКТС)", desc: "Теоретичні засади, практичні інструменти, робота з вразливими групами" },
+  { name: "КПТ: від теорії до практики 3.0", org: "UpPro School", date: "18.12.25 - 15.01.26", hours: "12 академічних годин, 0,4 кредити ЄКТС", id: "f3eb44fa-a3a5-4481-b9b0-3caf86a06fea" },
+  { name: "Підтримка психологів (24 години)", org: "ГО «Український професійний розвиток» / Всесвітня єврейська допомога", date: "30.10 - 11.12.2025", hours: "24 години", desc: "Травматичний досвід, підтримка сімей військовослужбовців, робота з втратою" },
+  { name: "Підтримка психологів (22 години)", org: "ГО «Український професійний розвиток» / Всесвітня єврейська допомога", date: "30.10 - 11.12.2025", hours: "22 години", desc: "Діти та підлітки в кризових ситуаціях, психосоматика, тривожність батьків" },
+  { name: "Кібербезпека для психологів", org: "UpPro School", date: "2025", hours: "4 академічні години, 0,13 кредити ЄКТС", id: "ba4aa031-09cf-47a7-b362-3826a69041c3" },
+  { name: "Синдром емоційного вигорання", org: "ДУ «Інститут неврології, психіатрії та наркології НАМН»", date: "26.02.2026", hours: "3 бали БПР", desc: "Дослідження та практика для фахівців психічного здоров'я" },
+  { name: "Гіпноз та гіпнотерапія: Міфи. Ефективність. Користь", org: "UpPro School", date: "2025", hours: "12 академічних годин, 0,4 кредити ЄКТС", id: "396b678b-8d69-4497-ab47-90980125e1e7" },
+  { name: "Програма підготовки екіпажів зв'язку А2М1", org: "179 НТЦ ЗСУ", date: "2024", hours: "136 год", id: "№МО 1131/2024" },
+  { name: "Менеджер TRiM", org: "ГО ЦПОС «Психіка», УВМШ", date: "2024" },
+  { name: "Основи КПТ: модель низької інтенсивності", org: "УІКПТ", date: "2025", hours: "31 год", id: "№3015859" },
+  { name: "TCCC. Поглиблений курс підготовки інструкторів", org: "ЗСУ, НЦ «Med Cat»", date: "2024", hours: "20 год" },
+  { name: "Сила Повернення: підтримка ветеранок", org: "ІДГУ, ТЦ Н. Сабліної", date: "2025", hours: "18 год", id: "№281025005" }
+];
+
+function renderCertificates() {
+  const container = document.getElementById('cert-grid');
+  if (!container) return;
+  container.innerHTML = CERTIFICATES.map(cert => `
+    <div class="cert-card" onclick="showCertDetails('${escapeHtml(cert.name)}', '${escapeHtml(cert.org)}', '${cert.date}', '${cert.hours || ''}', '${cert.desc || ''}')">
+      <div class="cert-name">${cert.name}</div>
+      <div class="cert-date">${cert.date}</div>
+      <div class="cert-org">${cert.org}</div>
+    </div>
+  `).join('');
+}
+
+function showCertDetails(name, org, date, hours, desc) {
+  document.getElementById('cert-modal-title').textContent = name;
+  document.getElementById('cert-modal-org').innerHTML = `🏢 ${org}`;
+  document.getElementById('cert-modal-date').innerHTML = `📅 ${date} ${hours ? `· ${hours}` : ''}`;
+  document.getElementById('cert-modal-desc').innerHTML = desc || 'Сертифікат підтверджує проходження навчання за даною програмою.';
+  openModal('cert-modal');
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return text.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+renderCertificates();
+</script>
+</body>
+</html>
